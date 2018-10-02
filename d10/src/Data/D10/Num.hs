@@ -160,6 +160,9 @@ d10Num (D10_Unsafe x) = fromIntegral x
 -- | The 'D10' which is uniquely congruent modulo 10 to the given 'Natural'.
 --
 -- 'integralMod10' is a more general version of this function.
+--
+-- >>> natMod10 56 :: D10 Int
+-- [d10|6|]
 
 natMod10 :: Num a => Natural -> D10 a
 natMod10 = integralMod10
@@ -167,6 +170,12 @@ natMod10 = integralMod10
 -- | The 'D10' which is uniquely congruent modulo 10 to the given 'Integer'.
 --
 -- 'integralMod10' is a more general version of this function.
+--
+-- >>> integerMod10 56 :: D10 Int
+-- [d10|6|]
+--
+-- >>> integerMod10 (-56) :: D10 Int
+-- [d10|4|]
 
 integerMod10 :: Num a => Integer -> D10 a
 integerMod10 = integralMod10
@@ -174,6 +183,12 @@ integerMod10 = integralMod10
 -- | The 'D10' which is uniquely congruent modulo 10 to the given 'Int'.
 --
 -- 'integralMod10' is a more general version of this function.
+--
+-- >>> intMod10 56 :: D10 Int
+-- [d10|6|]
+--
+-- >>> intMod10 (-56) :: D10 Int
+-- [d10|4|]
 
 intMod10 :: Num a => Int -> D10 a
 intMod10 = integralMod10
@@ -183,6 +198,12 @@ intMod10 = integralMod10
 --
 -- Specialized versions of this function include 'natMod10',
 -- 'integerMod10', and 'intMod10'.
+--
+-- >>> integralMod10 (56 :: Integer) :: D10 Int
+-- [d10|6|]
+--
+-- >>> integralMod10 ((-56) :: Integer) :: D10 Int
+-- [d10|4|]
 
 integralMod10 :: (Num b, Integral a) => a -> D10 b
 integralMod10 x = D10_Unsafe (fromIntegral (x `mod` 10))

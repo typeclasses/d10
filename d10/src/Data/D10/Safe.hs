@@ -162,6 +162,9 @@ d10Num x =
 -- | The 'D10' which is uniquely congruent modulo 10 to the given 'Natural'.
 --
 -- 'integralMod10' is a more general version of this function.
+--
+-- >>> natMod10 56
+-- D6
 
 natMod10 :: Natural -> D10
 natMod10 = integralMod10
@@ -169,6 +172,12 @@ natMod10 = integralMod10
 -- | The 'D10' which is uniquely congruent modulo 10 to the given 'Integer'.
 --
 -- 'integralMod10' is a more general version of this function.
+--
+-- >>> integerMod10 56
+-- D6
+--
+-- >>> integerMod10 (-56)
+-- D4
 
 integerMod10 :: Integer -> D10
 integerMod10 = integralMod10
@@ -176,6 +185,12 @@ integerMod10 = integralMod10
 -- | The 'D10' which is uniquely congruent modulo 10 to the given 'Int'.
 --
 -- 'integralMod10' is a more general version of this function.
+--
+-- >>> intMod10 56
+-- D6
+--
+-- >>> intMod10 (-56)
+-- D4
 
 intMod10 :: Int -> D10
 intMod10 = integralMod10
@@ -185,6 +200,12 @@ intMod10 = integralMod10
 --
 -- Specialized versions of this function include 'natMod10',
 -- 'integerMod10', and 'intMod10'.
+--
+-- >>> integralMod10 (56 :: Integer)
+-- D6
+--
+-- >>> integralMod10 ((-56) :: Integer)
+-- D4
 
 integralMod10 :: Integral a => a -> D10
 integralMod10 x =

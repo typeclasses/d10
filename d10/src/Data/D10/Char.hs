@@ -71,6 +71,9 @@ import           Language.Haskell.TH        (ExpQ, Q)
 import           Language.Haskell.TH.Quote  (QuasiQuoter (QuasiQuoter))
 import           Language.Haskell.TH.Syntax (Lift (lift))
 
+-- $setup
+-- >>> :set -XQuasiQuotes
+
 ---------------------------------------------------
 
 newtype D10 = D10_Unsafe Char
@@ -95,6 +98,9 @@ showsStr = appEndo . foldMap (Endo . showsChar)
 ---------------------------------------------------
 
 -- | Convert a 'D10' to its underlying 'Char' representation.
+--
+-- >>> d10Char [d10|7|]
+-- '7'
 
 d10Char :: D10 -> Char
 d10Char (D10_Unsafe c) = c
@@ -102,6 +108,9 @@ d10Char (D10_Unsafe c) = c
 -- | Convert a 'D10' to a 'String'.
 --
 -- @'d10Str' x = ['d10Char' x]@
+--
+-- >>> d10Str [d10|7|]
+-- "7"
 
 d10Str :: D10 -> String
 d10Str (D10_Unsafe c) = [c]
@@ -109,6 +118,9 @@ d10Str (D10_Unsafe c) = [c]
 -- | Convert a 'D10' to a 'Natural'.
 --
 -- 'd10Num' is a more general version of this function.
+--
+-- >>> d10Nat [d10|7|]
+-- 7
 
 d10Nat :: D10 -> Natural
 d10Nat (D10_Unsafe x) = fromIntegral (ord x - ord '0')
@@ -116,6 +128,9 @@ d10Nat (D10_Unsafe x) = fromIntegral (ord x - ord '0')
 -- | Convert a 'D10' to an 'Integer'.
 --
 -- 'd10Num' is a more general version of this function.
+--
+-- >>> d10Integer [d10|7|]
+-- 7
 
 d10Integer :: D10 -> Integer
 d10Integer (D10_Unsafe x) = toInteger (ord x - ord '0')
@@ -123,6 +138,9 @@ d10Integer (D10_Unsafe x) = toInteger (ord x - ord '0')
 -- | Convert a 'D10' to an 'Int'.
 --
 -- 'd10Num' is a more general version of this function.
+--
+-- >>> d10Int [d10|7|]
+-- 7
 
 d10Int :: D10 -> Int
 d10Int (D10_Unsafe x) = ord x - ord '0'
@@ -131,6 +149,9 @@ d10Int (D10_Unsafe x) = ord x - ord '0'
 --
 -- Specialized versions of this function include 'd10Nat',
 -- 'd10Integer', and 'd10Int'.
+--
+-- >>> d10Num [d10|7|] :: Integer
+-- 7
 
 d10Num :: Num a => D10 -> a
 d10Num (D10_Unsafe x) = fromIntegral (ord x - ord '0')
@@ -388,8 +409,6 @@ qq f = QuasiQuoter (f >=> lift) undefined undefined undefined
 
 -- | A single base-10 digit.
 --
--- >>> :set -XQuasiQuotes
---
 -- >>> d10Nat [d10|5|]
 -- 5
 --
@@ -407,8 +426,6 @@ d10 :: QuasiQuoter
 d10 = qq strD10Fail
 
 -- | A list of base-10 digits.
---
--- >>> :set -XQuasiQuotes
 --
 -- >>> d10Nat <$> [d10s||]
 -- []

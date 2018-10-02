@@ -93,7 +93,7 @@ data D10
     | D7  -- ^ Seven
     | D8  -- ^ Eight
     | D9  -- ^ Nine
-    deriving (Bounded, Eq, Lift, Ord, Show)
+    deriving (Bounded, Enum, Eq, Lift, Ord, Show)
 
 ---------------------------------------------------
 

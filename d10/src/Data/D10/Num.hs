@@ -103,6 +103,17 @@ instance Num a => Bounded (D10 a)
     minBound = D10_Unsafe 0
     maxBound = D10_Unsafe 9
 
+instance (Enum a, Eq a, Num a) => Enum (D10 a)
+  where
+    succ (D10_Unsafe 9) = error "D10 overflow"
+    succ (D10_Unsafe x) = D10_Unsafe (succ x)
+
+    pred (D10_Unsafe 0) = error "D10 underflow"
+    pred (D10_Unsafe x) = D10_Unsafe (pred x)
+
+    toEnum x = error "not implemented yet" -- todo
+    fromEnum x = error "not implemented yet" -- todo
+
 ---------------------------------------------------
 
 -- | Shows base-10 digits using the quasiquoters defined in

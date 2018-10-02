@@ -31,6 +31,18 @@ module Data.D10.Char
     , intD10Fail
     , isD10Int
 
+    -- * Converting between D10 and Integer
+    , d10Integer
+    , integerD10Maybe
+    , integerD10Fail
+    , isD10Integer
+
+    -- * Converting between D10 and general numeric types
+    , d10Num
+    , integralD10Maybe
+    , integralD10Fail
+    , isD10Integral
+
     -- * Quasi-quoters
     , d10
     , d10s
@@ -80,6 +92,12 @@ d10Nat (D10_Unsafe x) = fromIntegral (ord x - ord '0')
 d10Int :: D10 -> Int
 d10Int (D10_Unsafe x) = ord x - ord '0'
 
+d10Integer :: D10 -> Integer
+d10Integer (D10_Unsafe x) = toInteger (ord x - ord '0')
+
+d10Num :: Num a => D10 -> a
+d10Num (D10_Unsafe x) = fromIntegral (ord x - ord '0')
+
 ---------------------------------------------------
 
 charD10Maybe :: Char -> Maybe D10
@@ -100,6 +118,14 @@ intD10Maybe :: Int -> Maybe D10
 intD10Maybe x
         | isD10Int x  =  Just (D10_Unsafe (chr (x + ord '0')))
         | otherwise   =  Nothing
+
+integerD10Maybe :: Integer -> Maybe D10
+integerD10Maybe x
+        | isD10Integer x  =  Just (D10_Unsafe (chr (fromInteger x + ord '0')))
+        | otherwise       =  Nothing
+
+integralD10Maybe :: Integral a => a -> Maybe D10
+integralD10Maybe x = integerD10Maybe (toInteger x)
 
 ---------------------------------------------------
 
@@ -129,6 +155,15 @@ intD10Fail x =
         Just y   ->  return y
         Nothing  ->  fail "d10 must be between 0 and 9"
 
+integerD10Fail :: MonadFail m => Integer -> m D10
+integerD10Fail x =
+    case (integerD10Maybe x) of
+        Just y   ->  return y
+        Nothing  ->  fail "d10 must be between 0 and 9"
+
+integralD10Fail :: (Integral a, MonadFail m) => a -> m D10
+integralD10Fail x = integerD10Fail (toInteger x)
+
 ---------------------------------------------------
 
 isD10Char :: Char -> Bool
@@ -146,6 +181,12 @@ isD10Nat x = x <= 9
 
 isD10Int :: Int -> Bool
 isD10Int x = x >= 0 && x <= 9
+
+isD10Integer :: Integer -> Bool
+isD10Integer x = x >= 0 && x <= 9
+
+isD10Integral :: Integral a => a -> Bool
+isD10Integral x = isD10Integer (toInteger x)
 
 ---------------------------------------------------
 

@@ -35,4 +35,4 @@ library
     , template-haskell
 
   exposed-modules:
-      Data.D10
+      Data.D10.Char

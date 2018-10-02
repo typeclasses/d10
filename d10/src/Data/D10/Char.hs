@@ -1,4 +1,5 @@
-{-# LANGUAGE DeriveLift, TemplateHaskell #-}
+{-# LANGUAGE DeriveLift      #-}
+{-# LANGUAGE TemplateHaskell #-}
 
 module Data.D10.Char
     (
@@ -52,18 +53,18 @@ module Data.D10.Char
     ) where
 
 -- base
-import Control.Monad ((>=>))
-import Control.Monad.Fail (MonadFail (fail))
-import Data.Char (chr, ord)
-import Data.Monoid (Endo (..))
-import GHC.Generics (Generic)
-import Numeric.Natural (Natural)
-import Prelude hiding (fail)
+import           Control.Monad              ((>=>))
+import           Control.Monad.Fail         (MonadFail (fail))
+import           Data.Char                  (chr, ord)
+import           Data.Monoid                (Endo (..))
+import           GHC.Generics               (Generic)
+import           Numeric.Natural            (Natural)
+import           Prelude                    hiding (fail)
 
 -- template-haskell
-import Language.Haskell.TH (ExpQ, Q)
-import Language.Haskell.TH.Quote (QuasiQuoter (QuasiQuoter))
-import Language.Haskell.TH.Syntax (Lift (lift))
+import           Language.Haskell.TH        (ExpQ, Q)
+import           Language.Haskell.TH.Quote  (QuasiQuoter (QuasiQuoter))
+import           Language.Haskell.TH.Syntax (Lift (lift))
 
 ---------------------------------------------------
 
@@ -108,8 +109,8 @@ charD10Maybe x
         | otherwise    =  Nothing
 
 strD10Maybe :: String -> Maybe D10
-strD10Maybe [x]  = charD10Maybe x
-strD10Maybe _    =  Nothing
+strD10Maybe [x] = charD10Maybe x
+strD10Maybe _   = Nothing
 
 natD10Maybe :: Natural -> Maybe D10
 natD10Maybe x
@@ -148,20 +149,20 @@ strD10sFail = traverse charD10Fail
 natD10Fail :: MonadFail m => Natural -> m D10
 natD10Fail x =
     case (natD10Maybe x) of
-        Just y   ->  return y
-        Nothing  ->  fail "d10 must be less than 10"
+        Just y  -> return y
+        Nothing -> fail "d10 must be less than 10"
 
 intD10Fail :: MonadFail m => Int -> m D10
 intD10Fail x =
     case (intD10Maybe x) of
-        Just y   ->  return y
-        Nothing  ->  fail "d10 must be between 0 and 9"
+        Just y  ->  return y
+        Nothing ->  fail "d10 must be between 0 and 9"
 
 integerD10Fail :: MonadFail m => Integer -> m D10
 integerD10Fail x =
     case (integerD10Maybe x) of
-        Just y   ->  return y
-        Nothing  ->  fail "d10 must be between 0 and 9"
+        Just y  -> return y
+        Nothing -> fail "d10 must be between 0 and 9"
 
 integralD10Fail :: (Integral a, MonadFail m) => a -> m D10
 integralD10Fail x = integerD10Fail (toInteger x)
@@ -172,8 +173,8 @@ isD10Char :: Char -> Bool
 isD10Char x = x >= '0' && x <= '9'
 
 isD10Str :: String -> Bool
-isD10Str [x]  =  isD10Char x
-isD10Str _    =  False
+isD10Str [x] = isD10Char x
+isD10Str _   = False
 
 isD10sStr :: String -> Bool
 isD10sStr = all isD10Char

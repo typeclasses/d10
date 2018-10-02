@@ -20,39 +20,46 @@ module Data.D10.Num
     -- * Converting between D10 and Char
     , d10Char
     , charD10Maybe
+    , charD10Either
     , charD10Fail
 
     -- * Converting between D10 and String
     , d10Str
     , strD10Maybe
+    , strD10Either
     , strD10Fail
     , isD10Str
 
     -- * Converting between [D10] and String
     , strD10ListMaybe
+    , strD10ListEither
     , strD10ListFail
 
     -- * Converting between D10 and Natural
     , d10Nat
     , natD10Maybe
+    , natD10Either
     , natD10Fail
     , natMod10
 
     -- * Converting between D10 and Integer
     , d10Integer
     , integerD10Maybe
+    , integerD10Either
     , integerD10Fail
     , integerMod10
 
     -- * Converting between D10 and Int
     , d10Int
     , intD10Maybe
+    , intD10Either
     , intD10Fail
     , intMod10
 
     -- * Converting between D10 and general numeric types
     , d10Num
     , integralD10Maybe
+    , integralD10Either
     , integralD10Fail
     , integralMod10
 
@@ -390,6 +397,122 @@ intD10Maybe x
 
 integralD10Maybe :: (Num b, Integral a) => a -> Maybe (D10 b)
 integralD10Maybe x = integerD10Maybe (toInteger x)
+
+---------------------------------------------------
+
+-- | Convert a 'Char' to a 'D10' if it is within the range
+-- @'0'@ to @'9'@, or 'Left' with an error message otherwise.
+--
+-- >>> charD10Either '5'
+-- Right [d10|5|]
+--
+-- >>> charD10Either 'a'
+-- Left "d10 must be between 0 and 9"
+
+charD10Either :: Num a => Char -> Either String (D10 a)
+charD10Either x
+        | isD10Char x  =  Right (D10_Unsafe (fromIntegral (ord x - ord '0')))
+        | otherwise    =  Left "d10 must be between 0 and 9"
+
+-- | Convert a 'String' to a 'D10' if it consists of a single
+-- character and that character is within the range @'0'@ to
+-- @'9'@, or 'Left' with an error message otherwise.
+--
+-- >>> strD10Either "5"
+-- Right [d10|5|]
+--
+-- >>> strD10Either "a"
+-- Left "d10 must be between 0 and 9"
+--
+-- >>> strD10Either "58"
+-- Left "d10 must be a single character"
+
+strD10Either :: Num a => String -> Either String (D10 a)
+strD10Either [x]         =  charD10Either x
+strD10Either _           =  Left "d10 must be a single character"
+
+-- | Convert a 'String' to a 'D10' if all of the characters in
+-- the string fall within the range @'0'@ to @'9'@, or 'Left'
+-- with an error message otherwise.
+--
+-- >>> strD10ListEither "5"
+-- Right [d10list|5|]
+--
+-- >>> strD10ListEither "a"
+-- Left "d10 must be between 0 and 9"
+--
+-- >>> strD10ListEither "58"
+-- Right [d10list|58|]
+
+strD10ListEither :: Num a => String -> Either String [D10 a]
+strD10ListEither = traverse charD10Either
+
+-- | Convert a 'Natural' to a 'D10' if it is less than 10,
+-- or 'Left' with an error message otherwise.
+--
+-- >>> natD10Either 5
+-- Right [d10|5|]
+--
+-- >>> natD10Either 12
+-- Left "d10 must be less than 10"
+
+natD10Either :: Num a => Natural -> Either String (D10 a)
+natD10Either x =
+    case (natD10Maybe x) of
+        Just y  -> Right y
+        Nothing -> Left "d10 must be less than 10"
+
+-- | Convert an 'Integer' to a 'D10' if it is within the
+-- range 0 to 9, or 'Left' with an error message otherwise.
+--
+-- >>> integerD10Either 5
+-- Right [d10|5|]
+--
+-- >>> integerD10Either 12
+-- Left "d10 must be between 0 and 9"
+--
+-- >>> integerD10Either (-5)
+-- Left "d10 must be between 0 and 9"
+
+integerD10Either :: Num a => Integer -> Either String (D10 a)
+integerD10Either x =
+    case (integerD10Maybe x) of
+        Just y  -> Right y
+        Nothing -> Left "d10 must be between 0 and 9"
+
+-- | Convert an 'Int' to a 'D10' if it is within the range
+-- 0 to 9, or 'Left' with an error message otherwise.
+--
+-- >>> intD10Either 5
+-- Right [d10|5|]
+--
+-- >>> intD10Either 12
+-- Left "d10 must be between 0 and 9"
+--
+-- >>> intD10Either (-5)
+-- Left "d10 must be between 0 and 9"
+
+intD10Either :: Num a => Int -> Either String (D10 a)
+intD10Either x =
+    case (intD10Maybe x) of
+        Just y  ->  Right y
+        Nothing ->  Left "d10 must be between 0 and 9"
+
+-- | Convert a number of a type that has an 'Integral' instance
+-- to a 'D10' if it falls within the range 0 to 9, or 'Left'
+-- with an error message otherwise.
+--
+-- >>> integralD10Either (5 :: Integer)
+-- Right [d10|5|]
+--
+-- >>> integralD10Either (12 :: Integer)
+-- Left "d10 must be between 0 and 9"
+--
+-- >>> integralD10Either ((-5) :: Integer)
+-- Left "d10 must be between 0 and 9"
+
+integralD10Either :: (Num b, Integral a) => a -> Either String (D10 b)
+integralD10Either x = integerD10Either (toInteger x)
 
 ---------------------------------------------------
 

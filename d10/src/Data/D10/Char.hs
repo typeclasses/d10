@@ -196,8 +196,43 @@ isD10Integral x = isD10Integer (toInteger x)
 qq :: Lift a => (String -> Q a) -> QuasiQuoter
 qq f = QuasiQuoter (f >=> lift) undefined undefined undefined
 
+-- | A single base-10 digit.
+--
+-- >>> :set -XQuasiQuotes
+--
+-- >>> d10Nat [d10|5|]
+-- 5
+--
+-- >>> d10Nat [d10|a|]
+-- ...
+-- ... • d10 must be between 0 and 9
+-- ... • In the quasi-quotation: [d10|a|]
+--
+-- >>> d10Nat [d10|58|]
+-- ...
+-- ... • d10 must be a single character
+-- ... • In the quasi-quotation: [d10|58|]
+
 d10 :: QuasiQuoter
 d10 = qq strD10Fail
+
+-- | A list of base-10 digits.
+--
+-- >>> :set -XQuasiQuotes
+--
+-- >>> d10Nat <$> [d10s||]
+-- []
+--
+-- >>> d10Nat <$> [d10s|5|]
+-- [5]
+--
+-- >>> d10Nat <$> [d10s|58|]
+-- [5,8]
+--
+-- >>> d10Nat <$> [d10s|a|]
+-- ...
+-- ... • d10 must be between 0 and 9
+-- ... • In the quasi-quotation: [d10s|a|]
 
 d10s :: QuasiQuoter
 d10s = qq strD10sFail

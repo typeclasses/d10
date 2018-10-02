@@ -32,24 +32,28 @@ module Data.D10.Char
     , natD10Maybe
     , natD10Fail
     , isD10Nat
+    , natMod10
 
     -- * Converting between D10 and Integer
     , d10Integer
     , integerD10Maybe
     , integerD10Fail
     , isD10Integer
+    , integerMod10
 
     -- * Converting between D10 and Int
     , d10Int
     , intD10Maybe
     , intD10Fail
     , isD10Int
+    , intMod10
 
     -- * Converting between D10 and general numeric types
     , d10Num
     , integralD10Maybe
     , integralD10Fail
     , isD10Integral
+    , integralMod10
 
     ) where
 
@@ -130,6 +134,38 @@ d10Int (D10_Unsafe x) = ord x - ord '0'
 
 d10Num :: Num a => D10 -> a
 d10Num (D10_Unsafe x) = fromIntegral (ord x - ord '0')
+
+---------------------------------------------------
+
+-- | The 'D10' which is uniquely congruent modulo 10 to the given 'Natural'.
+--
+-- 'integralMod10' is a more general version of this function.
+
+natMod10 :: Natural -> D10
+natMod10 x = D10_Unsafe (chr (ord '0' + fromIntegral (x `mod` 10)))
+
+-- | The 'D10' which is uniquely congruent modulo 10 to the given 'Integer'.
+--
+-- 'integralMod10' is a more general version of this function.
+
+integerMod10 :: Integer -> D10
+integerMod10 x = D10_Unsafe (chr (ord '0' + fromInteger (x `mod` 10)))
+
+-- | The 'D10' which is uniquely congruent modulo 10 to the given 'Int'.
+--
+-- 'integralMod10' is a more general version of this function.
+
+intMod10 :: Int -> D10
+intMod10 x = D10_Unsafe (chr (ord '0' + (x `mod` 10)))
+
+-- | The 'D10' which is uniquely congruent modulo 10 to the given number
+-- (whose type must have an instance of the 'Integral' class).
+--
+-- Specialized versions of this function include 'natMod10',
+-- 'integerMod10', and 'intMod10'.
+
+integralMod10 :: Integral a => a -> D10
+integralMod10 x = D10_Unsafe (chr (ord '0' + fromIntegral (x `mod` 10)))
 
 ---------------------------------------------------
 

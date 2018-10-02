@@ -23,6 +23,7 @@ module Data.D10.Char
     , isD10Str
 
     -- * Converting between [D10] and String
+    , strD10sMaybe
     , strD10sFail
     , isD10sStr
 
@@ -134,24 +135,38 @@ d10Num (D10_Unsafe x) = fromIntegral (ord x - ord '0')
 
 -- | Convert a 'Char' to a 'D10' if it is within the range
 -- @'0'@ to @'9'@, or produce 'Nothing' otherwise.
+--
+-- 'charD10Fail' is a more general version of this function.
 
 charD10Maybe :: Char -> Maybe D10
 charD10Maybe x
         | isD10Char x  =  Just (D10_Unsafe x)
         | otherwise    =  Nothing
 
--- | Convert a 'String' to a 'D10' if all of the characters in the
--- string are within the range @'0'@ to @'9'@, or produce 'Nothing'
--- otherwise.
+-- | Convert a 'String' to a 'D10' if it consists of exactly one
+-- character and that character is within the range @'0'@ to @'9'@,
+-- or produce 'Nothing' otherwise.
+--
+-- 'strD10Fail' is a more general version of this function.
 
 strD10Maybe :: String -> Maybe D10
 strD10Maybe [x] = charD10Maybe x
 strD10Maybe _   = Nothing
 
+-- | Convert a 'String' to a list of 'D10' if all of the characters
+-- in the string are within the range @'0'@ to @'9'@, or produce
+-- 'Nothing' otherwise.
+--
+-- 'strD10sFail' is a more general version of this function.
+
+strD10sMaybe :: String -> Maybe [D10]
+strD10sMaybe = traverse charD10Maybe
+
 -- | Convert a 'Natural' to a 'D10' if it is less than 10,
 -- or produce 'Nothing' otherwise.
 --
--- 'integralD10Maybe' is a more general version of this function.
+-- 'integralD10Maybe', 'natD10Fail', and 'integralD10Fail'
+-- are more general versions of this function.
 
 natD10Maybe :: Natural -> Maybe D10
 natD10Maybe x
@@ -161,7 +176,8 @@ natD10Maybe x
 -- | Convert an 'Integer' to a 'D10' if it is within the range 0 to 9,
 -- or produce 'Nothing' otherwise.
 --
--- 'integralD10Maybe' is a more general version of this function.
+-- 'integralD10Maybe', 'integerD10Fail', and 'integralD10Fail'
+-- are more general versions of this function.
 
 integerD10Maybe :: Integer -> Maybe D10
 integerD10Maybe x
@@ -171,7 +187,8 @@ integerD10Maybe x
 -- | Convert an 'Int' to a 'D10' if it is within the range 0 to 9,
 -- or produce 'Nothing' otherwise.
 --
--- 'integralD10Maybe' is a more general version of this function.
+-- 'integralD10Maybe', 'intD10Fail', and 'integralD10Fail'
+-- are more general versions of this function.
 
 intD10Maybe :: Int -> Maybe D10
 intD10Maybe x
@@ -184,16 +201,29 @@ intD10Maybe x
 --
 -- Specialized versions of this function include 'natD10Maybe',
 -- 'integerD10Maybe', and 'intD10Maybe'.
+--
+-- 'integralD10Fail' is a more general version of this function.
 
 integralD10Maybe :: Integral a => a -> Maybe D10
 integralD10Maybe x = integerD10Maybe (toInteger x)
 
 ---------------------------------------------------
 
+-- | Convert a 'Char' to a 'D10' if it is within the range
+-- @'0'@ to @'9'@, or 'fail' with an error message otherwise.
+--
+-- 'charD10Maybe' is a specialized version of this function.
+
 charD10Fail :: MonadFail m => Char -> m D10
 charD10Fail x
         | isD10Char x  =  return (D10_Unsafe x)
         | otherwise    =  fail "d10 must be between 0 and 9"
+
+-- | Convert a 'String' to a 'D10' if it consists of a single
+-- character and that character is within the range @'0'@ to
+-- @'9'@, or 'fail' with an error message otherwise.
+--
+-- 'strD10Maybe' is a specialized version of this function.
 
 strD10Fail :: MonadFail m => String -> m D10
 strD10Fail [x]
@@ -201,8 +231,21 @@ strD10Fail [x]
         | otherwise    =  fail "d10 must be between 0 and 9"
 strD10Fail _           =  fail "d10 must be a single character"
 
+-- | Convert a 'String' to a 'D10' if all of the characters in
+-- the string fall within the range @'0'@ to @'9'@, or 'fail'
+-- with an error message otherwise.
+--
+-- 'strD10sMaybe' is a specialized version of this function.
+
 strD10sFail :: MonadFail m => String -> m [D10]
 strD10sFail = traverse charD10Fail
+
+-- | Convert a 'Natural' to a 'D10' if it is less than 10,
+-- or 'fail' with an error message otherwise.
+--
+-- 'natD10Maybe' is a specialized version of this function.
+--
+-- 'integralD10Fail' is a more general version of this function.
 
 natD10Fail :: MonadFail m => Natural -> m D10
 natD10Fail x =
@@ -210,17 +253,39 @@ natD10Fail x =
         Just y  -> return y
         Nothing -> fail "d10 must be less than 10"
 
+-- | Convert an 'Integer' to a 'D10' if it is within the
+-- range 0 to 9, or 'fail' with an error message otherwise.
+--
+-- 'integerD10Maybe' is a specialized version of this function.
+--
+-- 'integralD10Fail' is a more general version of this function.
+
 integerD10Fail :: MonadFail m => Integer -> m D10
 integerD10Fail x =
     case (integerD10Maybe x) of
         Just y  -> return y
         Nothing -> fail "d10 must be between 0 and 9"
 
+-- | Convert an 'Int' to a 'D10' if it is within the range
+-- 0 to 9, or 'fail' with an error message otherwise.
+--
+-- 'intD10Maybe' is a specialized version of this function.
+--
+-- 'integralD10Fail' is a more general version of this function.
+
 intD10Fail :: MonadFail m => Int -> m D10
 intD10Fail x =
     case (intD10Maybe x) of
         Just y  ->  return y
         Nothing ->  fail "d10 must be between 0 and 9"
+
+-- | Convert a number of a type that has an 'Integral' instance
+-- to a 'D10' if it falls within the range 0 to 9, or 'fail'
+-- with an error message otherwise.
+--
+-- 'natD10Maybe', 'integerD10Maybe', 'intD10Maybe',
+-- 'integralD10Maybe', 'natD10Fail', 'integerD10Fail', and
+-- 'intD10Fail' are all specialized versions of this function.
 
 integralD10Fail :: (Integral a, MonadFail m) => a -> m D10
 integralD10Fail x = integerD10Fail (toInteger x)

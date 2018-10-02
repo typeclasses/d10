@@ -361,6 +361,12 @@ integralD10Maybe x = integerD10Maybe (toInteger x)
 -- @'0'@ to @'9'@, or 'fail' with an error message otherwise.
 --
 -- 'charD10Maybe' is a specialized version of this function.
+--
+-- >>> charD10Fail '5' :: IO (D10 Int)
+-- [d10|5|]
+--
+-- >>> charD10Fail 'a' :: IO (D10 Int)
+-- *** Exception: user error (d10 must be between 0 and 9)
 
 charD10Fail :: (Num a, MonadFail m) => Char -> m (D10 a)
 charD10Fail x
@@ -372,6 +378,15 @@ charD10Fail x
 -- @'9'@, or 'fail' with an error message otherwise.
 --
 -- 'strD10Maybe' is a specialized version of this function.
+--
+-- >>> strD10Fail "5" :: IO (D10 Int)
+-- [d10|5|]
+--
+-- >>> strD10Fail "a" :: IO (D10 Int)
+-- *** Exception: user error (d10 must be between 0 and 9)
+--
+-- >>> strD10Fail "58" :: IO (D10 Int)
+-- *** Exception: user error (d10 must be a single character)
 
 strD10Fail :: (Num a, MonadFail m) => String -> m (D10 a)
 strD10Fail [x]         =  charD10Fail x
@@ -382,6 +397,15 @@ strD10Fail _           =  fail "d10 must be a single character"
 -- with an error message otherwise.
 --
 -- 'strD10ListMaybe' is a specialized version of this function.
+--
+-- >>> strD10ListFail "5" :: IO [D10 Int]
+-- [d10list|5|]
+--
+-- >>> strD10ListFail "a" :: IO [D10 Int]
+-- *** Exception: user error (d10 must be between 0 and 9)
+--
+-- >>> strD10ListFail "58" :: IO [D10 Int]
+-- [d10list|58|]
 
 strD10ListFail :: (Num a, MonadFail m) => String -> m [D10 a]
 strD10ListFail = traverse charD10Fail
@@ -392,6 +416,12 @@ strD10ListFail = traverse charD10Fail
 -- 'natD10Maybe' is a specialized version of this function.
 --
 -- 'integralD10Fail' is a more general version of this function.
+--
+-- >>> natD10Fail 5 :: IO (D10 Int)
+-- [d10|5|]
+--
+-- >>> natD10Fail 12 :: IO (D10 Int)
+-- *** Exception: user error (d10 must be less than 10)
 
 natD10Fail :: (Num a, MonadFail m) => Natural -> m (D10 a)
 natD10Fail x =
@@ -405,6 +435,15 @@ natD10Fail x =
 -- 'integerD10Maybe' is a specialized version of this function.
 --
 -- 'integralD10Fail' is a more general version of this function.
+--
+-- >>> integerD10Fail 5 :: IO (D10 Int)
+-- [d10|5|]
+--
+-- >>> integerD10Fail 12 :: IO (D10 Int)
+-- *** Exception: user error (d10 must be between 0 and 9)
+--
+-- >>> integerD10Fail (-5) :: IO (D10 Int)
+-- *** Exception: user error (d10 must be between 0 and 9)
 
 integerD10Fail :: (Num a, MonadFail m) => Integer -> m (D10 a)
 integerD10Fail x =
@@ -418,6 +457,15 @@ integerD10Fail x =
 -- 'intD10Maybe' is a specialized version of this function.
 --
 -- 'integralD10Fail' is a more general version of this function.
+--
+-- >>> intD10Fail 5 :: IO (D10 Int)
+-- [d10|5|]
+--
+-- >>> intD10Fail 12 :: IO (D10 Int)
+-- *** Exception: user error (d10 must be between 0 and 9)
+--
+-- >>> intD10Fail (-5) :: IO (D10 Int)
+-- *** Exception: user error (d10 must be between 0 and 9)
 
 intD10Fail :: (Num a, MonadFail m) => Int -> m (D10 a)
 intD10Fail x =
@@ -432,6 +480,15 @@ intD10Fail x =
 -- 'natD10Maybe', 'integerD10Maybe', 'intD10Maybe',
 -- 'integralD10Maybe', 'natD10Fail', 'integerD10Fail', and
 -- 'intD10Fail' are all specialized versions of this function.
+--
+-- >>> integralD10Fail (5 :: Integer) :: IO (D10 Int)
+-- [d10|5|]
+--
+-- >>> integralD10Fail (12 :: Integer) :: IO (D10 Int)
+-- *** Exception: user error (d10 must be between 0 and 9)
+--
+-- >>> integralD10Fail ((-5) :: Integer) :: IO (D10 Int)
+-- *** Exception: user error (d10 must be between 0 and 9)
 
 integralD10Fail :: (Num b, Integral a, MonadFail m) => a -> m (D10 b)
 integralD10Fail x = integerD10Fail (toInteger x)

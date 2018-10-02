@@ -32,17 +32,17 @@ module Data.D10.Char
     , natD10Fail
     , isD10Nat
 
-    -- * Converting between D10 and Int
-    , d10Int
-    , intD10Maybe
-    , intD10Fail
-    , isD10Int
-
     -- * Converting between D10 and Integer
     , d10Integer
     , integerD10Maybe
     , integerD10Fail
     , isD10Integer
+
+    -- * Converting between D10 and Int
+    , d10Int
+    , intD10Maybe
+    , intD10Fail
+    , isD10Int
 
     -- * Converting between D10 and general numeric types
     , d10Num
@@ -89,20 +89,43 @@ showsStr = appEndo . foldMap (Endo . showsChar)
 
 ---------------------------------------------------
 
+-- | Convert a 'D10' to its underlying 'Char' representation.
+
 d10Char :: D10 -> Char
 d10Char (D10_Unsafe c) = c
+
+-- | Convert a 'D10' to a 'String'.
+--
+-- @'d10Str' x = ['d10Char' x]@
 
 d10Str :: D10 -> String
 d10Str (D10_Unsafe c) = [c]
 
+-- | Convert a 'D10' to a 'Natural'.
+--
+-- 'd10Num' is a more general version of this function.
+
 d10Nat :: D10 -> Natural
 d10Nat (D10_Unsafe x) = fromIntegral (ord x - ord '0')
+
+-- | Convert a 'D10' to an 'Integer'.
+--
+-- 'd10Num' is a more general version of this function.
+
+d10Integer :: D10 -> Integer
+d10Integer (D10_Unsafe x) = toInteger (ord x - ord '0')
+
+-- | Convert a 'D10' to an 'Int'.
+--
+-- 'd10Num' is a more general version of this function.
 
 d10Int :: D10 -> Int
 d10Int (D10_Unsafe x) = ord x - ord '0'
 
-d10Integer :: D10 -> Integer
-d10Integer (D10_Unsafe x) = toInteger (ord x - ord '0')
+-- | Convert a 'D10' to any kind of number with a 'Num' instance.
+--
+-- Specialized versions of this function include 'd10Nat',
+-- 'd10Integer', and 'd10Int'.
 
 d10Num :: Num a => D10 -> a
 d10Num (D10_Unsafe x) = fromIntegral (ord x - ord '0')
@@ -123,15 +146,15 @@ natD10Maybe x
         | isD10Nat x  =  Just (D10_Unsafe (chr (fromIntegral x + ord '0')))
         | otherwise   =  Nothing
 
-intD10Maybe :: Int -> Maybe D10
-intD10Maybe x
-        | isD10Int x  =  Just (D10_Unsafe (chr (x + ord '0')))
-        | otherwise   =  Nothing
-
 integerD10Maybe :: Integer -> Maybe D10
 integerD10Maybe x
         | isD10Integer x  =  Just (D10_Unsafe (chr (fromInteger x + ord '0')))
         | otherwise       =  Nothing
+
+intD10Maybe :: Int -> Maybe D10
+intD10Maybe x
+        | isD10Int x  =  Just (D10_Unsafe (chr (x + ord '0')))
+        | otherwise   =  Nothing
 
 integralD10Maybe :: Integral a => a -> Maybe D10
 integralD10Maybe x = integerD10Maybe (toInteger x)
@@ -158,17 +181,17 @@ natD10Fail x =
         Just y  -> return y
         Nothing -> fail "d10 must be less than 10"
 
-intD10Fail :: MonadFail m => Int -> m D10
-intD10Fail x =
-    case (intD10Maybe x) of
-        Just y  ->  return y
-        Nothing ->  fail "d10 must be between 0 and 9"
-
 integerD10Fail :: MonadFail m => Integer -> m D10
 integerD10Fail x =
     case (integerD10Maybe x) of
         Just y  -> return y
         Nothing -> fail "d10 must be between 0 and 9"
+
+intD10Fail :: MonadFail m => Int -> m D10
+intD10Fail x =
+    case (intD10Maybe x) of
+        Just y  ->  return y
+        Nothing ->  fail "d10 must be between 0 and 9"
 
 integralD10Fail :: (Integral a, MonadFail m) => a -> m D10
 integralD10Fail x = integerD10Fail (toInteger x)
@@ -188,11 +211,11 @@ isD10sStr = all isD10Char
 isD10Nat :: Natural -> Bool
 isD10Nat x = x <= 9
 
-isD10Int :: Int -> Bool
-isD10Int x = x >= 0 && x <= 9
-
 isD10Integer :: Integer -> Bool
 isD10Integer x = x >= 0 && x <= 9
+
+isD10Int :: Int -> Bool
+isD10Int x = x >= 0 && x <= 9
 
 isD10Integral :: Integral a => a -> Bool
 isD10Integral x = isD10Integer (toInteger x)

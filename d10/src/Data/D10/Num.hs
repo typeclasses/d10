@@ -1,5 +1,6 @@
 {-# LANGUAGE AllowAmbiguousTypes #-}
 {-# LANGUAGE DeriveLift          #-}
+{-# LANGUAGE InstanceSigs        #-}
 {-# LANGUAGE ScopedTypeVariables #-}
 {-# LANGUAGE TemplateHaskell     #-}
 {-# LANGUAGE TypeApplications    #-}
@@ -12,6 +13,7 @@ module Data.D10.Num
     (
     -- * Type
       D10 (..)
+    -- $enum
 
     -- * Quasi-quoters
     , d10
@@ -110,16 +112,46 @@ instance Num a => Bounded (D10 a)
     minBound = D10_Unsafe 0
     maxBound = D10_Unsafe 9
 
-instance (Enum a, Eq a, Num a) => Enum (D10 a)
+-- $enum
+-- ==== Enum
+--
+-- >>> [ [d10|5|] .. ]
+-- [d10list|56789|]
+--
+-- >>> [ [d10|4|] .. [d10|7|] ]
+-- [d10list|4567|]
+--
+-- >>> [ [d10|5|], [d10|4|] .. ]
+-- [d10list|543210|]
+--
+-- >>> [ [d10|1|], [d10|3|] .. ]
+-- [d10list|13579|]
+--
+-- >>> [ minBound .. maxBound ] :: [D10 Integer]
+-- [d10list|0123456789|]
+
+instance Integral a => Enum (D10 a)
   where
+    fromEnum :: D10 a -> Int
+    fromEnum = d10Int
+
+    toEnum :: Int -> D10 a
+    toEnum = either error id . intD10Either
+
+    enumFrom :: D10 a -> [D10 a]
+    enumFrom x = enumFromTo x maxBound
+
+    enumFromThen :: D10 a -> D10 a -> [D10 a]
+    enumFromThen x y = enumFromThenTo x y bound
+      where
+        bound | fromEnum y >= fromEnum x = maxBound
+              | otherwise                = minBound
+
     succ (D10_Unsafe 9) = error "D10 overflow"
     succ (D10_Unsafe x) = D10_Unsafe (succ x)
 
     pred (D10_Unsafe 0) = error "D10 underflow"
     pred (D10_Unsafe x) = D10_Unsafe (pred x)
-
-    toEnum x = error "not implemented yet" -- todo
-    fromEnum x = error "not implemented yet" -- todo
 
 ---------------------------------------------------
 

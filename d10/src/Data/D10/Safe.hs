@@ -1,5 +1,5 @@
-{-# LANGUAGE DeriveLift      #-}
-{-# LANGUAGE TemplateHaskell #-}
+{-# LANGUAGE DeriveLift         #-}
+{-# LANGUAGE TemplateHaskell    #-}
 
 -- | Defines a 'D10' type as
 -- @'D0' | 'D1' | 'D2' | 'D3' | 'D4' | 'D5' | 'D6' | 'D7' | 'D8' | 'D9'@.
@@ -14,6 +14,7 @@ module Data.D10.Safe
     (
     -- * Type
       D10 (..)
+    -- $enum
 
     -- * Quasi-quoters
     , d10
@@ -101,6 +102,24 @@ data D10
     | D8  -- ^ Eight
     | D9  -- ^ Nine
     deriving (Bounded, Enum, Eq, Lift, Ord, Show)
+
+-- $enum
+-- ==== Enum
+--
+-- >>> [ D5 .. ]
+-- [D5,D6,D7,D8,D9]
+--
+-- >>> [ D4 .. D7 ]
+-- [D4,D5,D6,D7]
+--
+-- >>> [ D5, D4 .. ]
+-- [D5,D4,D3,D2,D1,D0]
+--
+-- >>> [ D1, D3 .. ]
+-- [D1,D3,D5,D7,D9]
+--
+-- >>> [ minBound .. maxBound ] :: [D10]
+-- [D0,D1,D2,D3,D4,D5,D6,D7,D8,D9]
 
 ---------------------------------------------------
 

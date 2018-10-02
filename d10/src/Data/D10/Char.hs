@@ -1,4 +1,5 @@
 {-# LANGUAGE DeriveLift      #-}
+{-# LANGUAGE InstanceSigs    #-}
 {-# LANGUAGE TemplateHaskell #-}
 
 -- | Defines a 'D10' type as a newtype for 'Char', where the
@@ -8,6 +9,7 @@ module Data.D10.Char
     (
     -- * Type
       D10 (..)
+    -- $enum
 
     -- * Quasi-quoters
     , d10
@@ -105,16 +107,48 @@ instance Bounded D10
     minBound = D10_Unsafe '0'
     maxBound = D10_Unsafe '9'
 
+-- $enum
+-- ==== Enum
+--
+-- >>> [ [d10|5|] .. ]
+-- [d10list|56789|]
+--
+-- >>> [ [d10|4|] .. [d10|7|] ]
+-- [d10list|4567|]
+--
+-- >>> [ [d10|5|], [d10|4|] .. ]
+-- [d10list|543210|]
+--
+-- >>> [ [d10|1|], [d10|3|] .. ]
+-- [d10list|13579|]
+--
+-- >>> [ minBound .. maxBound ] :: [D10]
+-- [d10list|0123456789|]
+
 instance Enum D10
   where
+    fromEnum :: D10 -> Int
+    fromEnum = d10Int
+
+    toEnum :: Int -> D10
+    toEnum = either error id . intD10Either
+
+    enumFrom :: D10 -> [D10]
+    enumFrom x = enumFromTo x maxBound
+
+    enumFromThen :: D10 -> D10 -> [D10]
+    enumFromThen x y = enumFromThenTo x y bound
+      where
+        bound | fromEnum y >= fromEnum x = maxBound
+              | otherwise                = minBound
+
+    succ :: D10 -> D10
     succ (D10_Unsafe '9') = error "D10 overflow"
     succ (D10_Unsafe x) = D10_Unsafe (succ x)
 
+    pred :: D10 -> D10
     pred (D10_Unsafe '0') = error "D10 underflow"
     pred (D10_Unsafe x) = D10_Unsafe (pred x)
-
-    toEnum x = error "not implemented yet" -- todo
-    fromEnum x = error "not implemented yet" -- todo
 
 ---------------------------------------------------
 

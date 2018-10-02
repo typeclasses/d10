@@ -71,6 +71,8 @@ import           Language.Haskell.TH.Syntax (Lift (lift))
 newtype D10 = D10_Unsafe Char
     deriving Lift
 
+---------------------------------------------------
+
 -- | Shows base-10 digits using the quasiquoters defined in
 -- "Data.D10.Char". A single digit is displayed using 'd10'.
 -- A list of digits is displayed using 'd10s'.

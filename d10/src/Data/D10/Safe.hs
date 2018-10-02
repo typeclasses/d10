@@ -399,6 +399,9 @@ qq f = QuasiQuoter (f >=> lift) undefined undefined undefined
 
 -- | A single base-10 digit.
 --
+-- This quasi-quoter, when used as an expression, produces a
+-- value of type 'D10'.
+--
 -- >>> [d10|5|]
 -- D5
 --
@@ -416,6 +419,9 @@ d10 :: QuasiQuoter
 d10 = qq strD10Fail
 
 -- | A list of base-10 digits.
+--
+-- This quasi-quoter, when used as an expression, produces a
+-- value of type @['D10']@.
 --
 -- >>> [d10list||]
 -- []

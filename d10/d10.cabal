@@ -36,6 +36,7 @@ library
 
   exposed-modules:
       Data.D10.Char
+    , Data.D10.Num
     , Data.D10.Predicate
     , Data.D10.Safe
 

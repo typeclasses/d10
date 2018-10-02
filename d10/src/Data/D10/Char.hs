@@ -9,6 +9,7 @@ module Data.D10.Char
     (
     -- * Type
       D10 (..)
+    -- $bounded
     -- $enum
 
     -- * Quasi-quoters
@@ -101,6 +102,15 @@ newtype D10 =
       --   that you should generally avoid using it directly, because it
       --   allows constructing invalid 'D10' values.
     deriving (Eq, Ord, Lift)
+
+-- $bounded
+-- ==== Bounded
+--
+-- >>> minBound :: D10
+-- [d10|0|]
+--
+-- >>> maxBound :: D10
+-- [d10|9|]
 
 instance Bounded D10
   where

@@ -14,6 +14,7 @@ module Data.D10.Safe
     (
     -- * Type
       D10 (..)
+    -- $bounded
     -- $enum
 
     -- * Quasi-quoters
@@ -102,6 +103,15 @@ data D10
     | D8  -- ^ Eight
     | D9  -- ^ Nine
     deriving (Bounded, Enum, Eq, Lift, Ord, Show)
+
+-- $bounded
+-- ==== Bounded
+--
+-- >>> minBound :: D10
+-- D0
+--
+-- >>> maxBound :: D10
+-- D9
 
 -- $enum
 -- ==== Enum

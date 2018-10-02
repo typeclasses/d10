@@ -80,7 +80,19 @@ import           Language.Haskell.TH.Syntax (Lift (lift))
 
 ---------------------------------------------------
 
-data D10 = D0 | D1 | D2 | D3 | D4 | D5 | D6 | D7 | D8 | D9
+-- | A whole number between /0/ and /9/.
+
+data D10
+    = D0  -- ^ Zero
+    | D1  -- ^ One
+    | D2  -- ^ Two
+    | D3  -- ^ Three
+    | D4  -- ^ Four
+    | D5  -- ^ Five
+    | D6  -- ^ Six
+    | D7  -- ^ Seven
+    | D8  -- ^ Eight
+    | D9  -- ^ Nine
     deriving (Eq, Lift, Show)
 
 ---------------------------------------------------

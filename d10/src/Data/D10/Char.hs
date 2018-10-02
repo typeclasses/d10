@@ -75,7 +75,22 @@ import           Language.Haskell.TH.Syntax (Lift (lift))
 
 ---------------------------------------------------
 
-newtype D10 = D10_Unsafe Char
+-- | A 'Char' value between @'0'@ and @'9'@.
+--
+-- The "Data.D10.Char" module provides many functions for
+-- constructing 'D10' values, including:
+--
+-- * @'integerD10Maybe' :: 'Integer' -> 'Maybe' 'D10'@
+-- * @'integerMod10' :: 'Integer' -> 'D10'@
+--
+-- With the @QuasiQuotes@ GHC extension enabled, you can write
+-- 'D10' literals using the quasi-quoters 'd10' and 'd10list'.
+
+newtype D10 =
+    D10_Unsafe Char
+      -- ^ The constructor's name include the word "unsafe" as a reminder
+      --   that you should generally avoid using it directly, because it
+      --   allows constructing invalid 'D10' values.
     deriving (Eq, Lift)
 
 ---------------------------------------------------

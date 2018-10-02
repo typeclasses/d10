@@ -292,38 +292,55 @@ integralD10Fail x = integerD10Fail (toInteger x)
 
 ---------------------------------------------------
 
--- | @'isD10Char' x = 'Data.Maybe.isJust' ('charD10Maybe' x)@
+-- | Determines whether a 'Char' is in the range @'0'@ to @'9'@.
+--
+-- @'isD10Char' x = 'Data.Maybe.isJust' ('charD10Maybe' x)@
 
 isD10Char :: Char -> Bool
 isD10Char x = x >= '0' && x <= '9'
 
--- | @'isD10Str' x = 'Data.Maybe.isJust' ('strD10Maybe' x)@
+-- | Determines whether a 'String' consists of a single character
+-- and that character is within the range @'0'@ to @'9'@.
+--
+-- @'isD10Str' x = 'Data.Maybe.isJust' ('strD10Maybe' x)@
 
 isD10Str :: String -> Bool
 isD10Str [x] = isD10Char x
 isD10Str _   = False
 
--- | @'isD10Str' x = 'Data.Maybe.isJust' ('strD10sMaybe' x)@
+-- | Determines whether a 'String' consists entirely of characters
+-- that are within the range @'0'@ to @'9'@.
+--
+-- @'isD10Str' x = 'Data.Maybe.isJust' ('strD10sMaybe' x)@
 
 isD10sStr :: String -> Bool
 isD10sStr = all isD10Char
 
--- | @'isD10Nat' x = 'Data.Maybe.isJust' ('natD10Maybe' x)@
+-- | Determines whether a 'Natural' is in the range 0 to 9.
+--
+-- @'isD10Nat' x = 'Data.Maybe.isJust' ('natD10Maybe' x)@
 
 isD10Nat :: Natural -> Bool
 isD10Nat x = x <= 9
 
--- | @'isD10Integer' x = 'Data.Maybe.isJust' ('integerD10Maybe' x)@
+-- | Determines whether an 'Integer' is in the range 0 to 9.
+--
+-- @'isD10Integer' x = 'Data.Maybe.isJust' ('integerD10Maybe' x)@
 
 isD10Integer :: Integer -> Bool
 isD10Integer x = x >= 0 && x <= 9
 
--- | @'isD10Int' x = 'Data.Maybe.isJust' ('intD10Maybe' x)@
+-- | Determines whether an 'Int' is in the range 0 to 9.
+--
+-- @'isD10Int' x = 'Data.Maybe.isJust' ('intD10Maybe' x)@
 
 isD10Int :: Int -> Bool
 isD10Int x = x >= 0 && x <= 9
 
--- | @'isD10Integral' x = 'Data.Maybe.isJust' ('integralD10Maybe' x)@
+-- | Determines whether a number whose type has an 'Integral'
+-- instance is in the range 0 to 9.
+--
+-- @'isD10Integral' x = 'Data.Maybe.isJust' ('integralD10Maybe' x)@
 
 isD10Integral :: Integral a => a -> Bool
 isD10Integral x = isD10Integer (toInteger x)

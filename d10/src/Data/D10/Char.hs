@@ -1,6 +1,9 @@
 {-# LANGUAGE DeriveLift      #-}
 {-# LANGUAGE TemplateHaskell #-}
 
+-- | Defines a 'D10' type as a newtype for 'Char', where the
+-- values are restricted to characters between @'0'@ and @'1'@.
+
 module Data.D10.Char
     (
     -- * Type

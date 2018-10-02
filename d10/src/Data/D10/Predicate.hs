@@ -1,3 +1,6 @@
+-- | Functions to test whether values of various
+-- types represent digits in the range /0/ to /9/.
+
 module Data.D10.Predicate where
 
 import Numeric.Natural

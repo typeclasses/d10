@@ -8,7 +8,7 @@ module Data.D10.Char
 
     -- * Quasi-quoters
     , d10
-    , d10s
+    , d10list
 
     -- * Converting between D10 and Char
     , d10Char
@@ -23,9 +23,9 @@ module Data.D10.Char
     , isD10Str
 
     -- * Converting between [D10] and String
-    , strD10sMaybe
-    , strD10sFail
-    , isD10sStr
+    , strD10ListMaybe
+    , strD10ListFail
+    , isD10ListStr
 
     -- * Converting between D10 and Natural
     , d10Nat
@@ -83,11 +83,11 @@ newtype D10 = D10_Unsafe Char
 
 -- | Shows base-10 digits using the quasiquoters defined in
 -- "Data.D10.Char". A single digit is displayed using 'd10'.
--- A list of digits is displayed using 'd10s'.
+-- A list of digits is displayed using 'd10list'.
 
 instance Show D10 where
-    showsPrec _ x = showString "[d10|"  . showsChar x . showString "|]"
-    showList xs   = showString "[d10s|" . showsStr xs . showString "|]"
+    showsPrec _ x = showString "[d10|"     . showsChar x . showString "|]"
+    showList xs   = showString "[d10list|" . showsStr xs . showString "|]"
 
 showsChar :: D10 -> ShowS
 showsChar (D10_Unsafe x) = showChar x
@@ -214,10 +214,10 @@ strD10Maybe _   = Nothing
 -- in the string are within the range @'0'@ to @'9'@, or produce
 -- 'Nothing' otherwise.
 --
--- 'strD10sFail' is a more general version of this function.
+-- 'strD10ListFail' is a more general version of this function.
 
-strD10sMaybe :: String -> Maybe [D10]
-strD10sMaybe = traverse charD10Maybe
+strD10ListMaybe :: String -> Maybe [D10]
+strD10ListMaybe = traverse charD10Maybe
 
 -- | Convert a 'Natural' to a 'D10' if it is less than 10,
 -- or produce 'Nothing' otherwise.
@@ -292,10 +292,10 @@ strD10Fail _           =  fail "d10 must be a single character"
 -- the string fall within the range @'0'@ to @'9'@, or 'fail'
 -- with an error message otherwise.
 --
--- 'strD10sMaybe' is a specialized version of this function.
+-- 'strD10ListMaybe' is a specialized version of this function.
 
-strD10sFail :: MonadFail m => String -> m [D10]
-strD10sFail = traverse charD10Fail
+strD10ListFail :: MonadFail m => String -> m [D10]
+strD10ListFail = traverse charD10Fail
 
 -- | Convert a 'Natural' to a 'D10' if it is less than 10,
 -- or 'fail' with an error message otherwise.
@@ -368,10 +368,10 @@ isD10Str _   = False
 -- | Determines whether a 'String' consists entirely of characters
 -- that are within the range @'0'@ to @'9'@.
 --
--- @'isD10Str' x = 'Data.Maybe.isJust' ('strD10sMaybe' x)@
+-- @'isD10Str' x = 'Data.Maybe.isJust' ('strD10ListMaybe' x)@
 
-isD10sStr :: String -> Bool
-isD10sStr = all isD10Char
+isD10ListStr :: String -> Bool
+isD10ListStr = all isD10Char
 
 -- | Determines whether a 'Natural' is in the range 0 to 9.
 --
@@ -427,19 +427,19 @@ d10 = qq strD10Fail
 
 -- | A list of base-10 digits.
 --
--- >>> d10Nat <$> [d10s||]
+-- >>> d10Nat <$> [d10list||]
 -- []
 --
--- >>> d10Nat <$> [d10s|5|]
+-- >>> d10Nat <$> [d10list|5|]
 -- [5]
 --
--- >>> d10Nat <$> [d10s|58|]
+-- >>> d10Nat <$> [d10list|58|]
 -- [5,8]
 --
--- >>> d10Nat <$> [d10s|a|]
+-- >>> d10Nat <$> [d10list|a|]
 -- ...
 -- ... • d10 must be between 0 and 9
--- ... • In the quasi-quotation: [d10s|a|]
+-- ... • In the quasi-quotation: [d10list|a|]
 
-d10s :: QuasiQuoter
-d10s = qq strD10sFail
+d10list :: QuasiQuoter
+d10list = qq strD10ListFail

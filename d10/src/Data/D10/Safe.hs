@@ -230,6 +230,12 @@ integralMod10 x =
 -- @'Data.D10.Predicate.isD10Char' x = 'Data.Maybe.isJust' ('charD10Maybe' x)@
 --
 -- 'charD10Fail' is a more general version of this function.
+--
+-- >>> charD10Maybe '5'
+-- Just D5
+--
+-- >>> charD10Maybe 'a'
+-- Nothing
 
 charD10Maybe :: Char -> Maybe D10
 charD10Maybe x =
@@ -253,6 +259,15 @@ charD10Maybe x =
 -- @'Data.D10.Predicate.isD10Str' x = 'Data.Maybe.isJust' ('strD10Maybe' x)@
 --
 -- 'strD10Fail' is a more general version of this function.
+--
+-- >>> strD10Maybe "5"
+-- Just D5
+--
+-- >>> strD10Maybe "a"
+-- Nothing
+--
+-- >>> strD10Maybe "58"
+-- Nothing
 
 strD10Maybe :: String -> Maybe D10
 strD10Maybe [x] = charD10Maybe x
@@ -265,6 +280,15 @@ strD10Maybe _   = Nothing
 -- @'Data.D10.Predicate.isD10Str' x = 'Data.Maybe.isJust' ('strD10ListMaybe' x)@
 --
 -- 'strD10ListFail' is a more general version of this function.
+--
+-- >>> strD10ListMaybe "5"
+-- Just [D5]
+--
+-- >>> strD10ListMaybe "a"
+-- Nothing
+--
+-- >>> strD10ListMaybe "58"
+-- Just [D5,D8]
 
 strD10ListMaybe :: String -> Maybe [D10]
 strD10ListMaybe = traverse charD10Maybe
@@ -276,6 +300,12 @@ strD10ListMaybe = traverse charD10Maybe
 --
 -- 'integralD10Maybe', 'natD10Fail', and 'integralD10Fail'
 -- are more general versions of this function.
+--
+-- >>> natD10Maybe 5
+-- Just D5
+--
+-- >>> natD10Maybe 12
+-- Nothing
 
 natD10Maybe :: Natural -> Maybe D10
 natD10Maybe = integralD10Maybe
@@ -287,6 +317,15 @@ natD10Maybe = integralD10Maybe
 --
 -- 'integralD10Maybe', 'integerD10Fail', and 'integralD10Fail'
 -- are more general versions of this function.
+--
+-- >>> integerD10Maybe 5
+-- Just D5
+--
+-- >>> integerD10Maybe 12
+-- Nothing
+--
+-- >>> integerD10Maybe (-5)
+-- Nothing
 
 integerD10Maybe :: Integer -> Maybe D10
 integerD10Maybe = integralD10Maybe
@@ -298,6 +337,15 @@ integerD10Maybe = integralD10Maybe
 --
 -- 'integralD10Maybe', 'intD10Fail', and 'integralD10Fail'
 -- are more general versions of this function.
+--
+-- >>> intD10Maybe 5
+-- Just D5
+--
+-- >>> intD10Maybe 12
+-- Nothing
+--
+-- >>> intD10Maybe (-5)
+-- Nothing
 
 intD10Maybe :: Int -> Maybe D10
 intD10Maybe = integralD10Maybe
@@ -312,6 +360,15 @@ intD10Maybe = integralD10Maybe
 -- 'integerD10Maybe', and 'intD10Maybe'.
 --
 -- 'integralD10Fail' is a more general version of this function.
+--
+-- >>> integralD10Maybe (5 :: Integer)
+-- Just D5
+--
+-- >>> integralD10Maybe (12 :: Integer)
+-- Nothing
+--
+-- >>> integralD10Maybe ((-5) :: Integer)
+-- Nothing
 
 integralD10Maybe :: Integral a => a -> Maybe D10
 integralD10Maybe x =

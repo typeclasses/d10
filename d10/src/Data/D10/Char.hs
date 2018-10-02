@@ -132,29 +132,58 @@ d10Num (D10_Unsafe x) = fromIntegral (ord x - ord '0')
 
 ---------------------------------------------------
 
+-- | Convert a 'Char' to a 'D10' if it is within the range
+-- @'0'@ to @'9'@, or produce 'Nothing' otherwise.
+
 charD10Maybe :: Char -> Maybe D10
 charD10Maybe x
         | isD10Char x  =  Just (D10_Unsafe x)
         | otherwise    =  Nothing
 
+-- | Convert a 'String' to a 'D10' if all of the characters in the
+-- string are within the range @'0'@ to @'9'@, or produce 'Nothing'
+-- otherwise.
+
 strD10Maybe :: String -> Maybe D10
 strD10Maybe [x] = charD10Maybe x
 strD10Maybe _   = Nothing
+
+-- | Convert a 'Natural' to a 'D10' if it is less than 10,
+-- or produce 'Nothing' otherwise.
+--
+-- 'integralD10Maybe' is a more general version of this function.
 
 natD10Maybe :: Natural -> Maybe D10
 natD10Maybe x
         | isD10Nat x  =  Just (D10_Unsafe (chr (fromIntegral x + ord '0')))
         | otherwise   =  Nothing
 
+-- | Convert an 'Integer' to a 'D10' if it is within the range 0 to 9,
+-- or produce 'Nothing' otherwise.
+--
+-- 'integralD10Maybe' is a more general version of this function.
+
 integerD10Maybe :: Integer -> Maybe D10
 integerD10Maybe x
         | isD10Integer x  =  Just (D10_Unsafe (chr (fromInteger x + ord '0')))
         | otherwise       =  Nothing
 
+-- | Convert an 'Int' to a 'D10' if it is within the range 0 to 9,
+-- or produce 'Nothing' otherwise.
+--
+-- 'integralD10Maybe' is a more general version of this function.
+
 intD10Maybe :: Int -> Maybe D10
 intD10Maybe x
         | isD10Int x  =  Just (D10_Unsafe (chr (x + ord '0')))
         | otherwise   =  Nothing
+
+-- | Construct a 'D10' from any kind of number with an 'Integral'
+-- instance, or produce 'Nothing' if the number falls outside the
+-- range 0 to 9.
+--
+-- Specialized versions of this function include 'natD10Maybe',
+-- 'integerD10Maybe', and 'intD10Maybe'.
 
 integralD10Maybe :: Integral a => a -> Maybe D10
 integralD10Maybe x = integerD10Maybe (toInteger x)

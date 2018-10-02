@@ -14,7 +14,7 @@ description:
     .
     * "Data.D10.Char" - Defines a @D10@ type as a newtype for @Char@,
       where the values are restricted to characters between @'0'@ and
-      @'1'@.
+      @'9'@.
     * "Data.D10.Num" - Defines a @D10@ type as a newtype for any
       type with an instance of the @Num@ class, where the values
       are restricted to numbers between @fromInteger 0@ and

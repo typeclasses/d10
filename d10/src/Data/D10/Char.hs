@@ -91,7 +91,12 @@ newtype D10 =
       -- ^ The constructor's name include the word "unsafe" as a reminder
       --   that you should generally avoid using it directly, because it
       --   allows constructing invalid 'D10' values.
-    deriving (Eq, Lift)
+    deriving (Eq, Ord, Lift)
+
+instance Bounded D10
+  where
+    minBound = D10_Unsafe '0'
+    maxBound = D10_Unsafe '9'
 
 ---------------------------------------------------
 

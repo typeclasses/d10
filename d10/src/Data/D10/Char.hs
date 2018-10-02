@@ -5,6 +5,10 @@ module Data.D10.Char
     -- * Type
       D10 (..)
 
+    -- * Quasi-quoters
+    , d10
+    , d10s
+
     -- * Converting between D10 and Char
     , d10Char
     , charD10Maybe
@@ -44,10 +48,6 @@ module Data.D10.Char
     , integralD10Maybe
     , integralD10Fail
     , isD10Integral
-
-    -- * Quasi-quoters
-    , d10
-    , d10s
 
     ) where
 

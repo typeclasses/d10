@@ -15,8 +15,10 @@ module Data.D10.Char
     , d10Str
     , strD10Maybe
     , strD10Fail
-    , strD10sFail
     , isD10Str
+
+    -- * Converting between [D10] and String
+    , strD10sFail
     , isD10sStr
 
     -- * Converting between D10 and Natural

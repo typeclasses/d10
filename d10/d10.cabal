@@ -67,8 +67,8 @@ library
   hs-source-dirs: src
 
   build-depends:
-      base >=4.7 && <5
-    , template-haskell
+      base             >= 4.10 && < 4.13
+    , template-haskell >= 2.12 && < 2.15
 
   exposed-modules:
       Data.D10.Char
@@ -84,5 +84,5 @@ test-suite doctest
   ghc-options: -threaded -rtsopts -with-rtsopts=-N
 
   build-depends:
-      base >=4.7 && <5
-    , doctest
+      base             >= 4.10 && < 4.13
+    , doctest          >= 0.13 && < 0.17

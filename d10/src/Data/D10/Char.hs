@@ -706,13 +706,13 @@ qq f = QuasiQuoter (f >=> lift) undefined undefined undefined
 --
 -- >>> d10Nat [d10|a|]
 -- ...
--- ... • d10 must be between 0 and 9
--- ... • In the quasi-quotation: [d10|a|]
+-- ... d10 must be between 0 and 9
+-- ...
 --
 -- >>> d10Nat [d10|58|]
 -- ...
--- ... • d10 must be a single character
--- ... • In the quasi-quotation: [d10|58|]
+-- ... d10 must be a single character
+-- ...
 
 d10 :: QuasiQuoter
 d10 = qq strD10Fail
@@ -733,8 +733,8 @@ d10 = qq strD10Fail
 --
 -- >>> d10Nat <$> [d10list|a|]
 -- ...
--- ... • d10 must be between 0 and 9
--- ... • In the quasi-quotation: [d10list|a|]
+-- ... d10 must be between 0 and 9
+-- ...
 
 d10list :: QuasiQuoter
 d10list = qq strD10ListFail

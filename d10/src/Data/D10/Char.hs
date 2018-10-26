@@ -77,7 +77,7 @@ import           Prelude                    hiding (fail)
 
 -- template-haskell
 import           Language.Haskell.TH        (ExpQ, Q)
-import           Language.Haskell.TH.Quote  (QuasiQuoter (QuasiQuoter))
+import           Language.Haskell.TH.Quote  (QuasiQuoter (..))
 import           Language.Haskell.TH.Syntax (Lift (lift))
 
 -- $setup
@@ -693,9 +693,6 @@ integralD10Fail x = integerD10Fail (toInteger x)
 
 ---------------------------------------------------
 
-qq :: Lift a => (String -> Q a) -> QuasiQuoter
-qq f = QuasiQuoter (f >=> lift) undefined undefined undefined
-
 -- | A single base-10 digit.
 --
 -- This quasi-quoter, when used as an expression, produces a
@@ -715,7 +712,12 @@ qq f = QuasiQuoter (f >=> lift) undefined undefined undefined
 -- ...
 
 d10 :: QuasiQuoter
-d10 = qq strD10Fail
+d10 = QuasiQuoter
+    { quoteExp  = strD10Fail >=> lift
+    , quotePat  = \_ -> fail "d10 cannot be used in a pattern context"
+    , quoteType = \_ -> fail "d10 cannot be used in a type context"
+    , quoteDec  = \_ -> fail "d10 cannot be used in a declaration context"
+    }
 
 -- | A list of base-10 digits.
 --
@@ -737,4 +739,9 @@ d10 = qq strD10Fail
 -- ...
 
 d10list :: QuasiQuoter
-d10list = qq strD10ListFail
+d10list = QuasiQuoter
+    { quoteExp  = strD10ListFail >=> lift
+    , quotePat  = \_ -> fail "d10list cannot be used in a pattern context"
+    , quoteType = \_ -> fail "d10list cannot be used in a type context"
+    , quoteDec  = \_ -> fail "d10list cannot be used in a declaration context"
+    }

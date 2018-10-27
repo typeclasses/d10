@@ -1,4 +1,5 @@
 {-# LANGUAGE DeriveLift       #-}
+{-# LANGUAGE TemplateHaskell  #-}
 {-# LANGUAGE TypeApplications #-}
 
 -- | Defines a 'D10' type as
@@ -21,9 +22,10 @@ module Data.D10.Safe
     , d10
     , d10list
 
-    -- * Splice expressions
+    -- * Splices
     , d10Exp
     , d10ListExp
+    , d10Pat
 
     -- * Converting between D10 and Char
     , d10Char
@@ -84,7 +86,7 @@ import           Numeric.Natural            (Natural)
 import           Prelude                    hiding (fail)
 
 -- template-haskell
-import           Language.Haskell.TH        (Exp, Q)
+import           Language.Haskell.TH        (Exp (..), Lit (..), Pat (..), Q)
 import           Language.Haskell.TH.Quote  (QuasiQuoter (..))
 import           Language.Haskell.TH.Syntax (Lift (lift))
 
@@ -772,6 +774,32 @@ d10Exp = integralD10Fail >=> lift @D10
 
 d10ListExp :: String -> Q Exp
 d10ListExp = strD10ListFail >=> lift @[D10]
+
+-- | A Template Haskell pattern for a single base-10 digit.
+-- The pattern can match values of type 'D10'.
+--
+-- >>> case [d10|5|] of { $(d10Pat 4) -> "A"; $(d10Pat 5) -> "B"; _ -> "C" }
+-- "B"
+--
+-- >>> case [d10|5|] of { $(d10Pat 12) -> "A"; $(d10Pat 5) -> "B"; _ -> "C" }
+-- ...
+-- ... d10 must be between 0 and 9
+-- ...
+
+d10Pat :: Integral a => a -> Q Pat
+d10Pat x =
+    case x of
+        0 -> [p| D0 |]
+        1 -> [p| D1 |]
+        2 -> [p| D2 |]
+        3 -> [p| D3 |]
+        4 -> [p| D4 |]
+        5 -> [p| D5 |]
+        6 -> [p| D6 |]
+        7 -> [p| D7 |]
+        8 -> [p| D8 |]
+        9 -> [p| D9 |]
+        _ -> fail "d10 must be between 0 and 9"
 
 ---------------------------------------------------
 

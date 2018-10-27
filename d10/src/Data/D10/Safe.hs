@@ -1,5 +1,5 @@
-{-# LANGUAGE DeriveLift         #-}
-{-# LANGUAGE TemplateHaskell    #-}
+{-# LANGUAGE DeriveLift       #-}
+{-# LANGUAGE TypeApplications #-}
 
 -- | Defines a 'D10' type as
 -- @'D0' | 'D1' | 'D2' | 'D3' | 'D4' | 'D5' | 'D6' | 'D7' | 'D8' | 'D9'@.
@@ -20,6 +20,10 @@ module Data.D10.Safe
     -- * Quasi-quoters
     , d10
     , d10list
+
+    -- * Splice expressions
+    , d10Exp
+    , d10ListExp
 
     -- * Converting between D10 and Char
     , d10Char
@@ -80,12 +84,13 @@ import           Numeric.Natural            (Natural)
 import           Prelude                    hiding (fail)
 
 -- template-haskell
-import           Language.Haskell.TH        (ExpQ, Q)
+import           Language.Haskell.TH        (Exp, Q)
 import           Language.Haskell.TH.Quote  (QuasiQuoter (..))
 import           Language.Haskell.TH.Syntax (Lift (lift))
 
 -- $setup
 -- >>> :set -XQuasiQuotes
+-- >>> :set -XTemplateHaskell
 
 ---------------------------------------------------
 
@@ -727,6 +732,46 @@ integralD10Fail x =
     case (integralD10Maybe x) of
         Just y  -> return y
         Nothing -> fail "d10 must be between 0 and 9"
+
+---------------------------------------------------
+
+-- | A single base-10 digit.
+--
+-- Produces an expression of type 'D10' that can be used
+-- in a Template Haskell splice.
+--
+-- >>> $(d10Exp 5)
+-- D5
+--
+-- >>> $(d10Exp 12)
+-- ...
+-- ... d10 must be between 0 and 9
+-- ...
+
+d10Exp :: Integral a => a -> Q Exp
+d10Exp = integralD10Fail >=> lift @D10
+
+-- | A list of base-10 digits.
+--
+-- Produces an expression of type @['D10']@ that can be used
+-- in a Template Haskell splice.
+--
+-- >>> $(d10ListExp "")
+-- []
+--
+-- >>> $(d10ListExp "5")
+-- [D5]
+--
+-- >>> $(d10ListExp "58")
+-- [D5,D8]
+--
+-- >>> $(d10ListExp "a")
+-- ...
+-- ... d10 must be between 0 and 9
+-- ...
+
+d10ListExp :: String -> Q Exp
+d10ListExp = strD10ListFail >=> lift @[D10]
 
 ---------------------------------------------------
 

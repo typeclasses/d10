@@ -2,7 +2,6 @@
 {-# LANGUAGE DeriveLift          #-}
 {-# LANGUAGE InstanceSigs        #-}
 {-# LANGUAGE ScopedTypeVariables #-}
-{-# LANGUAGE TemplateHaskell     #-}
 {-# LANGUAGE TypeApplications    #-}
 
 -- | Defines a 'D10' type as a newtype for any type with an
@@ -19,6 +18,10 @@ module Data.D10.Num
     -- * Quasi-quoters
     , d10
     , d10list
+
+    -- * Splice expressions
+    , d10Exp
+    , d10ListExp
 
     -- * Converting between D10 and Char
     , d10Char
@@ -80,12 +83,13 @@ import           Numeric.Natural            (Natural)
 import           Prelude                    hiding (fail)
 
 -- template-haskell
-import           Language.Haskell.TH        (ExpQ, Q)
+import           Language.Haskell.TH        (Exp, Q)
 import           Language.Haskell.TH.Quote  (QuasiQuoter (..))
 import           Language.Haskell.TH.Syntax (Lift (lift))
 
 -- $setup
 -- >>> :set -XQuasiQuotes
+-- >>> :set -XTemplateHaskell
 
 ---------------------------------------------------
 
@@ -98,8 +102,13 @@ import           Language.Haskell.TH.Syntax (Lift (lift))
 -- * @'integerD10Maybe' :: 'Integer' -> 'Maybe' 'D10'@
 -- * @'integerMod10' :: 'Integer' -> 'D10'@
 --
--- With the @QuasiQuotes@ GHC extension enabled, you can write
--- 'D10' literals using the quasi-quoters 'd10' and 'd10list'.
+-- There are also several ways to safely write 'D10' literals
+-- using Template Haskell:
+--
+-- * With the @QuasiQuotes@ GHC extension enabled, you can write
+--   use the quasi-quoters 'd10' and 'd10list'.
+-- * With the @TemplateHaskell@ GHC extension enabled, you can
+--   splice expressions produced by 'd10Exp' and 'd10ListExp'.
 
 newtype D10 a =
     D10_Unsafe a
@@ -693,6 +702,46 @@ intD10Fail x =
 
 integralD10Fail :: (Num b, Integral a, MonadFail m) => a -> m (D10 b)
 integralD10Fail x = integerD10Fail (toInteger x)
+
+---------------------------------------------------
+
+-- | A single base-10 digit.
+--
+-- Produces an expression of type @'D10' a@ that can be used
+-- in a Template Haskell splice.
+--
+-- >>> d10Nat $(d10Exp 5)
+-- 5
+--
+-- >>> d10Nat $(d10Exp 12)
+-- ...
+-- ... d10 must be between 0 and 9
+-- ...
+
+d10Exp :: forall a b. (Integral b, Lift a, Num a) => b -> Q Exp
+d10Exp = integralD10Fail >=> lift @(D10 a)
+
+-- | A list of base-10 digits.
+--
+-- Produces an expression of type @['D10' a]@ that can be used
+-- in a Template Haskell splice.
+--
+-- >>> d10Nat <$> $(d10ListExp "")
+-- []
+--
+-- >>> d10Nat <$> $(d10ListExp "5")
+-- [5]
+--
+-- >>> d10Nat <$> $(d10ListExp "58")
+-- [5,8]
+--
+-- >>> d10Nat <$> $(d10ListExp "a")
+-- ...
+-- ... d10 must be between 0 and 9
+-- ...
+
+d10ListExp :: forall a. (Lift a, Num a) => String -> Q Exp
+d10ListExp = strD10ListFail >=> lift @[D10 a]
 
 ---------------------------------------------------
 

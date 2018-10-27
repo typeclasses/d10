@@ -1,6 +1,6 @@
-{-# LANGUAGE DeriveLift      #-}
-{-# LANGUAGE InstanceSigs    #-}
-{-# LANGUAGE TemplateHaskell #-}
+{-# LANGUAGE DeriveLift       #-}
+{-# LANGUAGE InstanceSigs     #-}
+{-# LANGUAGE TypeApplications #-}
 
 -- | Defines a 'D10' type as a newtype for 'Char', where the
 -- values are restricted to characters between @'0'@ and @'9'@.
@@ -15,6 +15,10 @@ module Data.D10.Char
     -- * Quasi-quoters
     , d10
     , d10list
+
+    -- * Splice expressions
+    , d10Exp
+    , d10ListExp
 
     -- * Converting between D10 and Char
     , d10Char
@@ -76,12 +80,13 @@ import           Numeric.Natural            (Natural)
 import           Prelude                    hiding (fail)
 
 -- template-haskell
-import           Language.Haskell.TH        (ExpQ, Q)
+import           Language.Haskell.TH        (Exp, Q)
 import           Language.Haskell.TH.Quote  (QuasiQuoter (..))
 import           Language.Haskell.TH.Syntax (Lift (lift))
 
 -- $setup
 -- >>> :set -XQuasiQuotes
+-- >>> :set -XTemplateHaskell
 
 ---------------------------------------------------
 
@@ -690,6 +695,46 @@ intD10Fail x =
 
 integralD10Fail :: (Integral a, MonadFail m) => a -> m D10
 integralD10Fail x = integerD10Fail (toInteger x)
+
+---------------------------------------------------
+
+-- | A single base-10 digit.
+--
+-- Produces an expression of type 'D10' that can be used
+-- in a Template Haskell splice.
+--
+-- >>> d10Nat $(d10Exp 5)
+-- 5
+--
+-- >>> d10Nat $(d10Exp 12)
+-- ...
+-- ... d10 must be between 0 and 9
+-- ...
+
+d10Exp :: Integral a => a -> Q Exp
+d10Exp = integralD10Fail >=> lift @D10
+
+-- | A list of base-10 digits.
+--
+-- Produces an expression of type @['D10']@ that can be used
+-- in a Template Haskell splice.
+--
+-- >>> d10Nat <$> $(d10ListExp "")
+-- []
+--
+-- >>> d10Nat <$> $(d10ListExp "5")
+-- [5]
+--
+-- >>> d10Nat <$> $(d10ListExp "58")
+-- [5,8]
+--
+-- >>> d10Nat <$> $(d10ListExp "a")
+-- ...
+-- ... d10 must be between 0 and 9
+-- ...
+
+d10ListExp :: String -> Q Exp
+d10ListExp = strD10ListFail >=> lift @[D10]
 
 ---------------------------------------------------
 

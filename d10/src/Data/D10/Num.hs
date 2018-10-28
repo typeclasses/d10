@@ -8,6 +8,12 @@
 -- | Defines a 'D10' type as a newtype for any type with an
 -- instance of the 'Num' class, where the values are restricted
 -- to numbers between @'fromInteger' 0@ and @'fromInteger' 9@.
+--
+-- The following modules define @D10@ types in different ways
+-- but are otherwise very similar to this one:
+--
+-- * "Data.D10.Char"
+-- * "Data.D10.Safe"
 
 module Data.D10.Num
     (

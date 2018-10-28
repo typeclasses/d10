@@ -5,11 +5,16 @@
 -- | Defines a 'D10' type as
 -- @'D0' | 'D1' | 'D2' | 'D3' | 'D4' | 'D5' | 'D6' | 'D7' | 'D8' | 'D9'@.
 --
--- This module is called "safe" because, in contrast with
--- the alternative representations of a digit defined in
--- "Data.D10.Char" and "Data.D10.Num", this 'D10' type does
--- not include any possibility of representing an invalid
--- non-digit value.
+-- The following modules define @D10@ types in different ways
+-- but are otherwise very similar to this one:
+--
+-- * "Data.D10.Char"
+-- * "Data.D10.Num"
+--
+-- This module is called "safe" because, in contrast with the
+-- alternative representations of a digit defined in the other
+-- modules, this 'D10' type does not include any possibility
+-- of representing an invalid non-digit value.
 
 module Data.D10.Safe
     (

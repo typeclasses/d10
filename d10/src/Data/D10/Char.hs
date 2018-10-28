@@ -5,6 +5,12 @@
 
 -- | Defines a 'D10' type as a newtype for 'Char', where the
 -- values are restricted to characters between @'0'@ and @'9'@.
+--
+-- The following modules define @D10@ types in different ways
+-- but are otherwise very similar to this one:
+--
+-- * "Data.D10.Num"
+-- * "Data.D10.Safe"
 
 module Data.D10.Char
     (

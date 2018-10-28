@@ -80,6 +80,9 @@ module Data.D10.Safe
     , integralD10Fail
     , integralMod10
 
+    -- * Modular arithmetic
+    , (+), (-), (*)
+
     ) where
 
 import Data.D10.Predicate
@@ -91,7 +94,9 @@ import Data.Char          (chr, ord)
 import Data.Monoid        (Endo (..))
 import GHC.Generics       (Generic)
 import Numeric.Natural    (Natural)
-import Prelude            hiding (fail)
+import Prelude            hiding (fail, (+), (-), (*))
+
+import qualified Prelude as P
 
 -- template-haskell
 import Language.Haskell.TH.Quote  (QuasiQuoter (..))
@@ -937,3 +942,37 @@ d10list = QuasiQuoter
     , quoteType = \_ -> fail "d10list cannot be used in a type context"
     , quoteDec  = \_ -> fail "d10list cannot be used in a declaration context"
     }
+
+---------------------------------------------------
+
+-- | Addition modulo 10.
+--
+-- >>> D2 + D3
+-- D5
+--
+-- >>> D6 + D7
+-- D3
+
+(+) :: D10 -> D10 -> D10
+x + y = intMod10 (d10Int x P.+ d10Int y)
+
+-- | Subtraction modulo 10.
+--
+-- >>> D7 - D5
+-- D2
+--
+-- >>> D3 - D7
+-- D6
+
+(-) :: D10 -> D10 -> D10
+x - y = intMod10 (d10Int x P.- d10Int y)
+
+-- | Multiplication modulo 10.
+--
+-- >>> D2 * D4
+-- D8
+-- >>> D7 * D8
+-- D6
+
+(*) :: D10 -> D10 -> D10
+x * y = intMod10 (d10Int x P.* d10Int y)

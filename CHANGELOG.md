@@ -24,3 +24,7 @@
 **v0.2.0.1**
 
   * Add `CHANGELOG.md` to package distribution
+
+**upcoming**
+
+  * Add functions mod-10 arithmetic functions: `(+)`, `(-)`, `(*)`

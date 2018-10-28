@@ -80,6 +80,9 @@ module Data.D10.Num
     , integralD10Fail
     , integralMod10
 
+    -- * Modular arithmetic
+    , (+), (-), (*)
+
     ) where
 
 import Data.D10.Predicate
@@ -91,7 +94,9 @@ import Data.Char          (chr, ord)
 import Data.Monoid        (Endo (..))
 import GHC.Generics       (Generic)
 import Numeric.Natural    (Natural)
-import Prelude            hiding (fail)
+import Prelude            hiding (fail, (+), (-), (*))
+
+import qualified Prelude as P
 
 -- template-haskell
 import Language.Haskell.TH.Quote  (QuasiQuoter (..))
@@ -206,7 +211,7 @@ showsStr = appEndo . foldMap (Endo . showsChar)
 -- '7'
 
 d10Char :: Integral a => D10 a -> Char
-d10Char (D10_Unsafe x) = chr (ord '0' + fromIntegral x)
+d10Char (D10_Unsafe x) = chr (ord '0' P.+ fromIntegral x)
 
 -- | Convert a 'D10' to a 'String'.
 --
@@ -329,7 +334,7 @@ integralMod10 x = D10_Unsafe (fromIntegral (x `mod` 10))
 
 charD10Maybe :: Num a => Char -> Maybe (D10 a)
 charD10Maybe x
-        | isD10Char x  =  Just (D10_Unsafe (fromIntegral (ord x - ord '0')))
+        | isD10Char x  =  Just (D10_Unsafe (fromIntegral (ord x P.- ord '0')))
         | otherwise    =  Nothing
 
 -- | Convert a 'String' to a 'D10' if it consists of exactly one
@@ -472,7 +477,7 @@ integralD10Maybe x = integerD10Maybe (toInteger x)
 
 charD10Either :: Num a => Char -> Either String (D10 a)
 charD10Either x
-        | isD10Char x  =  Right (D10_Unsafe (fromIntegral (ord x - ord '0')))
+        | isD10Char x  =  Right (D10_Unsafe (fromIntegral (ord x P.- ord '0')))
         | otherwise    =  Left "d10 must be between 0 and 9"
 
 -- | Convert a 'String' to a 'D10' if it consists of a single
@@ -590,7 +595,7 @@ integralD10Either x = integerD10Either (toInteger x)
 
 charD10Fail :: (Num a, MonadFail m) => Char -> m (D10 a)
 charD10Fail x
-        | isD10Char x  =  return (D10_Unsafe (fromIntegral (ord x - ord '0')))
+        | isD10Char x  =  return (D10_Unsafe (fromIntegral (ord x P.- ord '0')))
         | otherwise    =  fail "d10 must be between 0 and 9"
 
 -- | Convert a 'String' to a 'D10' if it consists of a single
@@ -887,3 +892,38 @@ d10list = QuasiQuoter
     , quoteType = \_ -> fail "d10list cannot be used in a type context"
     , quoteDec  = \_ -> fail "d10list cannot be used in a declaration context"
     }
+
+---------------------------------------------------
+
+-- | Addition modulo 10.
+--
+-- >>> [d10|2|] + [d10|3|]
+-- [d10|5|]
+--
+-- >>> [d10|6|] + [d10|7|]
+-- [d10|3|]
+
+(+) :: Integral a => D10 a -> D10 a -> D10 a
+x + y = intMod10 (d10Int x P.+ d10Int y)
+
+-- | Subtraction modulo 10.
+--
+-- >>> [d10|7|] - [d10|5|]
+-- [d10|2|]
+--
+-- >>> [d10|3|] - [d10|7|]
+-- [d10|6|]
+
+(-) :: Integral a => D10 a -> D10 a -> D10 a
+x - y = intMod10 (d10Int x P.- d10Int y)
+
+-- | Multiplication modulo 10.
+--
+-- >>> [d10|2|] * [d10|4|]
+-- [d10|8|]
+--
+-- >>> [d10|7|] * [d10|8|]
+-- [d10|6|]
+
+(*) :: Integral a => D10 a -> D10 a -> D10 a
+x * y = intMod10 (d10Int x P.* d10Int y)

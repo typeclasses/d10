@@ -77,6 +77,9 @@ module Data.D10.Char
     , integralD10Fail
     , integralMod10
 
+    -- * Modular arithmetic
+    , (+), (-), (*)
+
     ) where
 
 import Data.D10.Predicate
@@ -88,7 +91,9 @@ import Data.Char          (chr, ord)
 import Data.Monoid        (Endo (..))
 import GHC.Generics       (Generic)
 import Numeric.Natural    (Natural)
-import Prelude            hiding (fail)
+import Prelude            hiding (fail, (+), (-), (*))
+
+import qualified Prelude as P
 
 -- template-haskell
 import Language.Haskell.TH.Quote  (QuasiQuoter (..))
@@ -219,7 +224,7 @@ d10Str (D10_Unsafe x) = [x]
 -- 7
 
 d10Nat :: D10 -> Natural
-d10Nat (D10_Unsafe x) = fromIntegral (ord x - ord '0')
+d10Nat (D10_Unsafe x) = fromIntegral (ord x P.- ord '0')
 
 -- | Convert a 'D10' to an 'Integer'.
 --
@@ -229,7 +234,7 @@ d10Nat (D10_Unsafe x) = fromIntegral (ord x - ord '0')
 -- 7
 
 d10Integer :: D10 -> Integer
-d10Integer (D10_Unsafe x) = toInteger (ord x - ord '0')
+d10Integer (D10_Unsafe x) = toInteger (ord x P.- ord '0')
 
 -- | Convert a 'D10' to an 'Int'.
 --
@@ -239,7 +244,7 @@ d10Integer (D10_Unsafe x) = toInteger (ord x - ord '0')
 -- 7
 
 d10Int :: D10 -> Int
-d10Int (D10_Unsafe x) = ord x - ord '0'
+d10Int (D10_Unsafe x) = ord x P.- ord '0'
 
 -- | Convert a 'D10' to any kind of number with a 'Num' instance.
 --
@@ -250,7 +255,7 @@ d10Int (D10_Unsafe x) = ord x - ord '0'
 -- 7
 
 d10Num :: Num a => D10 -> a
-d10Num (D10_Unsafe x) = fromIntegral (ord x - ord '0')
+d10Num (D10_Unsafe x) = fromIntegral (ord x P.- ord '0')
 
 ---------------------------------------------------
 
@@ -262,7 +267,7 @@ d10Num (D10_Unsafe x) = fromIntegral (ord x - ord '0')
 -- [d10|6|]
 
 natMod10 :: Natural -> D10
-natMod10 x = D10_Unsafe (chr (ord '0' + fromIntegral (x `mod` 10)))
+natMod10 x = D10_Unsafe (chr (ord '0' P.+ fromIntegral (x `mod` 10)))
 
 -- | The 'D10' which is uniquely congruent modulo 10 to the given 'Integer'.
 --
@@ -275,7 +280,7 @@ natMod10 x = D10_Unsafe (chr (ord '0' + fromIntegral (x `mod` 10)))
 -- [d10|4|]
 
 integerMod10 :: Integer -> D10
-integerMod10 x = D10_Unsafe (chr (ord '0' + fromInteger (x `mod` 10)))
+integerMod10 x = D10_Unsafe (chr (ord '0' P.+ fromInteger (x `mod` 10)))
 
 -- | The 'D10' which is uniquely congruent modulo 10 to the given 'Int'.
 --
@@ -288,7 +293,7 @@ integerMod10 x = D10_Unsafe (chr (ord '0' + fromInteger (x `mod` 10)))
 -- [d10|4|]
 
 intMod10 :: Int -> D10
-intMod10 x = D10_Unsafe (chr (ord '0' + (x `mod` 10)))
+intMod10 x = D10_Unsafe (chr (ord '0' P.+ (x `mod` 10)))
 
 -- | The 'D10' which is uniquely congruent modulo 10 to the given number
 -- (whose type must have an instance of the 'Integral' class).
@@ -303,7 +308,7 @@ intMod10 x = D10_Unsafe (chr (ord '0' + (x `mod` 10)))
 -- [d10|4|]
 
 integralMod10 :: Integral a => a -> D10
-integralMod10 x = D10_Unsafe (chr (ord '0' + fromIntegral (x `mod` 10)))
+integralMod10 x = D10_Unsafe (chr (ord '0' P.+ fromIntegral (x `mod` 10)))
 
 ---------------------------------------------------
 
@@ -382,7 +387,7 @@ strD10ListMaybe = traverse charD10Maybe
 
 natD10Maybe :: Natural -> Maybe D10
 natD10Maybe x
-        | isD10Nat x  =  Just (D10_Unsafe (chr (fromIntegral x + ord '0')))
+        | isD10Nat x  =  Just (D10_Unsafe (chr (fromIntegral x P.+ ord '0')))
         | otherwise   =  Nothing
 
 -- | Convert an 'Integer' to a 'D10' if it is within the range 0 to 9,
@@ -404,7 +409,7 @@ natD10Maybe x
 
 integerD10Maybe :: Integer -> Maybe D10
 integerD10Maybe x
-        | isD10Integer x  =  Just (D10_Unsafe (chr (fromInteger x + ord '0')))
+        | isD10Integer x  =  Just (D10_Unsafe (chr (fromInteger x P.+ ord '0')))
         | otherwise       =  Nothing
 
 -- | Convert an 'Int' to a 'D10' if it is within the range 0 to 9,
@@ -426,7 +431,7 @@ integerD10Maybe x
 
 intD10Maybe :: Int -> Maybe D10
 intD10Maybe x
-        | isD10Int x  =  Just (D10_Unsafe (chr (x + ord '0')))
+        | isD10Int x  =  Just (D10_Unsafe (chr (x P.+ ord '0')))
         | otherwise   =  Nothing
 
 -- | Construct a 'D10' from any kind of number with an 'Integral'
@@ -880,3 +885,38 @@ d10list = QuasiQuoter
     , quoteType = \_ -> fail "d10list cannot be used in a type context"
     , quoteDec  = \_ -> fail "d10list cannot be used in a declaration context"
     }
+
+---------------------------------------------------
+
+-- | Addition modulo 10.
+--
+-- >>> [d10|2|] + [d10|3|]
+-- [d10|5|]
+--
+-- >>> [d10|6|] + [d10|7|]
+-- [d10|3|]
+
+(+) :: D10 -> D10 -> D10
+x + y = intMod10 (d10Int x P.+ d10Int y)
+
+-- | Subtraction modulo 10.
+--
+-- >>> [d10|7|] - [d10|5|]
+-- [d10|2|]
+--
+-- >>> [d10|3|] - [d10|7|]
+-- [d10|6|]
+
+(-) :: D10 -> D10 -> D10
+x - y = intMod10 (d10Int x P.- d10Int y)
+
+-- | Multiplication modulo 10.
+--
+-- >>> [d10|2|] * [d10|4|]
+-- [d10|8|]
+--
+-- >>> [d10|7|] * [d10|8|]
+-- [d10|6|]
+
+(*) :: D10 -> D10 -> D10
+x * y = intMod10 (d10Int x P.* d10Int y)

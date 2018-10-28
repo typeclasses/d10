@@ -698,9 +698,7 @@ integralD10Fail x = integerD10Fail (toInteger x)
 
 ---------------------------------------------------
 
--- | A single base-10 digit.
---
--- Produces an expression of type 'D10' that can be used
+-- | Produces an expression of type 'D10' that can be used
 -- in a Template Haskell splice.
 --
 -- >>> d10Nat $(d10Exp 5)
@@ -710,13 +708,14 @@ integralD10Fail x = integerD10Fail (toInteger x)
 -- ...
 -- ... d10 must be between 0 and 9
 -- ...
+--
+-- You may also be interested in 'd10', a quasi-quoter which
+-- does something similar.
 
 d10Exp :: Integral a => a -> Q Exp
 d10Exp = integralD10Fail >=> lift @D10
 
--- | A list of base-10 digits.
---
--- Produces an expression of type @['D10']@ that can be used
+-- | Produces an expression of type @['D10']@ that can be used
 -- in a Template Haskell splice.
 --
 -- >>> d10Nat <$> $(d10ListExp "")
@@ -732,6 +731,9 @@ d10Exp = integralD10Fail >=> lift @D10
 -- ...
 -- ... d10 must be between 0 and 9
 -- ...
+--
+-- You may also be interested in 'd10list', a quasi-quoter which
+-- does something similar.
 
 d10ListExp :: String -> Q Exp
 d10ListExp = strD10ListFail >=> lift @[D10]

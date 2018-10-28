@@ -71,13 +71,13 @@ module Data.D10.Char
 import Data.D10.Predicate
 
 -- base
-import           Control.Monad              ((>=>))
-import           Control.Monad.Fail         (MonadFail (fail))
-import           Data.Char                  (chr, ord)
-import           Data.Monoid                (Endo (..))
-import           GHC.Generics               (Generic)
-import           Numeric.Natural            (Natural)
-import           Prelude                    hiding (fail)
+import Control.Monad      ((>=>))
+import Control.Monad.Fail (MonadFail (fail))
+import Data.Char          (chr, ord)
+import Data.Monoid        (Endo (..))
+import GHC.Generics       (Generic)
+import Numeric.Natural    (Natural)
+import Prelude            hiding (fail)
 
 -- template-haskell
 import           Language.Haskell.TH        (Exp, Q)

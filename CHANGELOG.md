@@ -20,3 +20,7 @@
   * Add `Integral a` constraint to `d10` and `d10list` in the
     `Data.D10.Num` module, because this is needed for the
     definition of `quotePat`.
+
+**v0.2.0.1**
+
+  * Add `CHANGELOG.md` to package distribution

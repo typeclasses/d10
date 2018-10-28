@@ -1,5 +1,6 @@
 {-# LANGUAGE DeriveLift       #-}
 {-# LANGUAGE InstanceSigs     #-}
+{-# LANGUAGE TemplateHaskell  #-}
 {-# LANGUAGE TypeApplications #-}
 
 -- | Defines a 'D10' type as a newtype for 'Char', where the
@@ -19,6 +20,10 @@ module Data.D10.Char
     -- * Splice expressions
     , d10Exp
     , d10ListExp
+
+    -- * Splice patterns
+    , d10Pat
+    , d10ListPat
 
     -- * Converting between D10 and Char
     , d10Char
@@ -80,9 +85,8 @@ import Numeric.Natural    (Natural)
 import Prelude            hiding (fail)
 
 -- template-haskell
-import           Language.Haskell.TH        (Exp, Q)
-import           Language.Haskell.TH.Quote  (QuasiQuoter (..))
-import           Language.Haskell.TH.Syntax (Lift (lift))
+import Language.Haskell.TH.Quote  (QuasiQuoter (..))
+import Language.Haskell.TH.Syntax (Exp (..), Lift (lift), Lit (..), Pat (..), Q)
 
 -- $setup
 -- >>> :set -XQuasiQuotes
@@ -740,6 +744,44 @@ d10ListExp = strD10ListFail >=> lift @[D10]
 
 ---------------------------------------------------
 
+-- | Produces a pattern that can be used in a splice
+-- to match a particular 'D10' value.
+--
+-- >>> :{
+--       case (charD10Maybe '5') of
+--         Just $(d10Pat [d10|4|]) -> "A"
+--         Just $(d10Pat [d10|5|]) -> "B"
+--         _                       -> "C"
+-- >>> :}
+-- "B"
+--
+-- You may wish to use the 'd10' quasi-quoter instead.
+
+d10Pat :: D10 -> Q Pat
+d10Pat x =
+    return (ConP 'D10_Unsafe [LitP (CharL (d10Char x))])
+
+-- | Produces a pattern that can be used in a splice
+-- to match a particular list of 'D10' values.
+--
+-- >>> :{
+--       case (strD10ListMaybe "56") of
+--         Just $(d10ListPat [d10list|42|]) -> "A"
+--         Just $(d10ListPat [d10list|56|]) -> "B"
+--         _                                -> "C"
+-- >>> :}
+-- "B"
+--
+-- You may wish to use the 'd10list' quasi-quoter instead.
+
+d10ListPat :: [D10] -> Q Pat
+d10ListPat xs =
+  do
+    pats <- traverse d10Pat xs
+    return (ListP pats)
+
+--------------------------------------------------
+
 -- | A single base-10 digit.
 --
 -- This quasi-quoter, when used as an expression, produces a
@@ -757,11 +799,31 @@ d10ListExp = strD10ListFail >=> lift @[D10]
 -- ...
 -- ... d10 must be a single character
 -- ...
+--
+-- This quasi-quoter can also be used as a pattern.
+--
+-- >>> :{
+--       case (charD10Maybe '5') of
+--         Just [d10|4|] -> "A"
+--         Just [d10|5|] -> "B"
+--         _             -> "C"
+-- >>> :}
+-- "B"
+--
+-- >>> :{
+--       case (charD10Maybe '5') of
+--         Just [d10|x|] -> "A"
+--         Just [d10|5|] -> "B"
+--         _             -> "C"
+-- >>> :}
+-- ...
+-- ... d10 must be between 0 and 9
+-- ...
 
 d10 :: QuasiQuoter
 d10 = QuasiQuoter
     { quoteExp  = strD10Fail >=> lift
-    , quotePat  = \_ -> fail "d10 cannot be used in a pattern context"
+    , quotePat  = strD10Fail >=> d10Pat
     , quoteType = \_ -> fail "d10 cannot be used in a type context"
     , quoteDec  = \_ -> fail "d10 cannot be used in a declaration context"
     }
@@ -784,11 +846,31 @@ d10 = QuasiQuoter
 -- ...
 -- ... d10 must be between 0 and 9
 -- ...
+--
+-- This quasi-quoter can also be used as a pattern.
+--
+-- >>> :{
+--       case [d10list|56|] of
+--         [d10list|41|] -> "A"
+--         [d10list|56|] -> "B"
+--         _             -> "C"
+-- >>> :}
+-- "B"
+--
+-- >>> :{
+--       case [d10list|56|] of
+--         [d10list|4x|] -> "A"
+--         [d10list|56|] -> "B"
+--         _             -> "C"
+-- >>> :}
+-- ...
+-- ... d10 must be between 0 and 9
+-- ...
 
 d10list :: QuasiQuoter
 d10list = QuasiQuoter
     { quoteExp  = strD10ListFail >=> lift
-    , quotePat  = \_ -> fail "d10list cannot be used in a pattern context"
+    , quotePat  = strD10ListFail >=> d10ListPat
     , quoteType = \_ -> fail "d10list cannot be used in a type context"
     , quoteDec  = \_ -> fail "d10list cannot be used in a declaration context"
     }

@@ -28,3 +28,7 @@
 **v0.2.1.0**
 
   * Add functions mod-10 arithmetic functions: `(+)`, `(-)`, `(*)`
+
+**v0.2.1.2**
+
+  * Support GHC 8.8

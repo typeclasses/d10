@@ -1,5 +1,5 @@
 name: d10
-version: 0.2.1.2
+version: 0.2.1.4
 category: Data
 synopsis: Digits 0-9
 
@@ -60,6 +60,7 @@ tested-with:
   , GHC == 8.4.3
   , GHC == 8.6.1
   , GHC == 8.8.1
+  , GHC == 8.10.1
 
 extra-source-files:
     README.md
@@ -74,8 +75,8 @@ library
   hs-source-dirs: src
 
   build-depends:
-      base             >= 4.10 && < 4.14
-    , template-haskell >= 2.12 && < 2.16
+      base             >= 4.10 && < 4.15
+    , template-haskell >= 2.12 && < 2.17
 
   exposed-modules:
       Data.D10.Char
@@ -91,5 +92,5 @@ test-suite doctest
   ghc-options: -threaded -rtsopts -with-rtsopts=-N
 
   build-depends:
-      base             >= 4.10 && < 4.14
+      base             >= 4.10 && < 4.15
     , doctest          >= 0.13 && < 0.17

@@ -32,3 +32,7 @@
 **v0.2.1.2**
 
   * Support GHC 8.8
+
+**v0.2.1.4**
+
+  * Support GHC 8.10

@@ -105,6 +105,7 @@ import Language.Haskell.TH.Syntax (Exp (..), Lift (lift), Lit (..), Pat (..), Q)
 -- $setup
 -- >>> :set -XQuasiQuotes
 -- >>> :set -XTemplateHaskell
+-- >>> :set -fno-warn-overlapping-patterns
 
 ---------------------------------------------------
 
@@ -764,7 +765,7 @@ integralD10Fail x =
 -- does something similar.
 
 d10Exp :: Integral a => a -> Q Exp
-d10Exp = integralD10Fail >=> lift @D10
+d10Exp = integralD10Fail >=> (lift :: D10 -> Q Exp)
 
 -- | Produces an expression of type @['D10']@ that can be used
 -- in a Template Haskell splice.
@@ -787,7 +788,7 @@ d10Exp = integralD10Fail >=> lift @D10
 -- does something similar.
 
 d10ListExp :: String -> Q Exp
-d10ListExp = strD10ListFail >=> lift @[D10]
+d10ListExp = strD10ListFail >=> (lift :: [D10] -> Q Exp)
 
 ---------------------------------------------------
 

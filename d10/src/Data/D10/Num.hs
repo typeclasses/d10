@@ -105,6 +105,7 @@ import Language.Haskell.TH.Syntax (Exp (..), Lift (lift), Lit (..), Pat (..), Q)
 -- $setup
 -- >>> :set -XQuasiQuotes
 -- >>> :set -XTemplateHaskell
+-- >>> :set -fno-warn-overlapping-patterns
 
 ---------------------------------------------------
 
@@ -735,7 +736,7 @@ integralD10Fail x = integerD10Fail (toInteger x)
 -- does something similar.
 
 d10Exp :: forall a b. (Integral b, Lift a, Num a) => b -> Q Exp
-d10Exp = integralD10Fail >=> lift @(D10 a)
+d10Exp = integralD10Fail >=> (lift :: D10 a -> Q Exp)
 
 -- | Produces an expression of type @['D10' a]@ that can be used
 -- in a Template Haskell splice.
@@ -758,7 +759,7 @@ d10Exp = integralD10Fail >=> lift @(D10 a)
 -- does something similar.
 
 d10ListExp :: forall a. (Lift a, Num a) => String -> Q Exp
-d10ListExp = strD10ListFail >=> lift @[D10 a]
+d10ListExp = strD10ListFail >=> (lift :: [D10 a] -> Q Exp)
 
 ---------------------------------------------------
 
@@ -840,7 +841,7 @@ d10ListPat xs =
 
 d10 :: forall a. (Lift a, Integral a) => QuasiQuoter
 d10 = QuasiQuoter
-    { quoteExp  = strD10Fail >=> lift @(D10 a)
+    { quoteExp  = strD10Fail >=> (lift :: D10 a -> Q Exp)
     , quotePat  = strD10Fail >=> d10Pat @a
     , quoteType = \_ -> fail "d10 cannot be used in a type context"
     , quoteDec  = \_ -> fail "d10 cannot be used in a declaration context"
@@ -887,7 +888,7 @@ d10 = QuasiQuoter
 
 d10list :: forall a. (Lift a, Integral a) => QuasiQuoter
 d10list = QuasiQuoter
-    { quoteExp  = strD10ListFail >=> lift @[D10 a]
+    { quoteExp  = strD10ListFail >=> (lift :: [D10 a] -> Q Exp)
     , quotePat  = strD10ListFail >=> d10ListPat @a
     , quoteType = \_ -> fail "d10list cannot be used in a type context"
     , quoteDec  = \_ -> fail "d10list cannot be used in a declaration context"

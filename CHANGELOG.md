@@ -36,3 +36,7 @@
 **v0.2.1.4**
 
   * Support GHC 8.10
+
+**v0.2.1.6**
+
+  * Support `doctest-0.17`

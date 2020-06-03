@@ -1,5 +1,5 @@
 name: d10
-version: 0.2.1.4
+version: 0.2.1.6
 category: Data
 synopsis: Digits 0-9
 
@@ -93,4 +93,4 @@ test-suite doctest
 
   build-depends:
       base             >= 4.10 && < 4.15
-    , doctest          >= 0.13 && < 0.17
+    , doctest          >= 0.13 && < 0.18

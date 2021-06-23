@@ -362,7 +362,7 @@ strD10Maybe _   = Nothing
 -- in the string are within the range @'0'@ to @'9'@, or produce
 -- 'Nothing' otherwise.
 --
--- @'Data.D10.Predicate.isD10Str' x = 'Data.Maybe.isJust' ('strD10ListMaybe' x)@
+-- @'Data.D10.Predicate.isD10ListStr' x = 'Data.Maybe.isJust' ('strD10ListMaybe' x)@
 --
 -- 'strD10ListFail' is a more general version of this function.
 --

@@ -40,3 +40,8 @@
 **v0.2.1.6**
 
   * Support `doctest-0.17`
+
+**v0.3**
+
+  * `Data.D10.Char` and `Data.D10.Num` no longer export `isD10Str`.
+    This function is still available in `Data.D10.Predicate`.

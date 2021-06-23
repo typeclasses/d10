@@ -42,7 +42,6 @@ module Data.D10.Char
     , strD10Maybe
     , strD10Either
     , strD10Fail
-    , isD10Str
 
     -- * Converting between [D10] and String
     , strD10ListMaybe

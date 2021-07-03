@@ -1,4 +1,3 @@
-{-# options_ghc -fno-warn-overlapping-patterns #-}
 {-# language DerivingStrategies, GeneralizedNewtypeDeriving,
     QuasiQuotes, ScopedTypeVariables, TemplateHaskell #-}
 

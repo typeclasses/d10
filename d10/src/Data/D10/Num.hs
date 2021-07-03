@@ -99,7 +99,7 @@ import qualified Prelude as P
 -- template-haskell
 import Language.Haskell.TH.Lib    (litP, integerL)
 import Language.Haskell.TH.Quote  (QuasiQuoter (..))
-import Language.Haskell.TH.Syntax (Exp (..), Lift (lift), Pat (..), Q)
+import Language.Haskell.TH.Syntax (Exp (..), Lift, Pat (..), Q)
 
 -- $setup
 -- >>> :set -XQuasiQuotes
@@ -764,7 +764,7 @@ d10ListExp :: String -> Q Exp
 d10ListExp = strD10ListFail >=> d10ListExp'
 
 d10ListExp' :: [D10 Integer] -> Q Exp
-d10ListExp' = lift
+d10ListExp' xs = [| xs |]
 
 ---------------------------------------------------
 

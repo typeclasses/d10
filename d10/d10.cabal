@@ -104,3 +104,19 @@ test-suite char
     , template-haskell
            ^>= 2.12 || ^>= 2.13 || ^>= 2.14
         || ^>= 2.15 || ^>= 2.16
+
+test-suite num
+  default-language: Haskell2010
+  ghc-options: -Wall
+  hs-source-dirs: test
+  type: exitcode-stdio-1.0
+  main-is: num.hs
+
+  build-depends:
+      d10
+    , base ^>= 4.10 || ^>= 4.11 || ^>= 4.12
+        || ^>= 4.13 || ^>= 4.14
+    , hedgehog ^>= 1.0
+    , template-haskell
+           ^>= 2.12 || ^>= 2.13 || ^>= 2.14
+        || ^>= 2.15 || ^>= 2.16

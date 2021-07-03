@@ -734,8 +734,11 @@ integralD10Fail x = integerD10Fail (toInteger x)
 -- You may also be interested in 'd10', a quasi-quoter which
 -- does something similar.
 
-d10Exp :: forall a. (Lift a, Num a) => Integer -> Q Exp
-d10Exp = integerD10Fail >=> (lift :: D10 a -> Q Exp)
+d10Exp :: Integer -> Q Exp
+d10Exp = integerD10Fail >=> d10Exp'
+
+d10Exp' :: D10 Integer -> Q Exp
+d10Exp' (D10_Unsafe x) = [| D10_Unsafe (fromInteger x) |]
 
 -- | Produces an expression of type @['D10' a]@ that can be used
 -- in a Template Haskell splice.
@@ -757,8 +760,11 @@ d10Exp = integerD10Fail >=> (lift :: D10 a -> Q Exp)
 -- You may also be interested in 'd10list', a quasi-quoter which
 -- does something similar.
 
-d10ListExp :: forall a. (Lift a, Num a) => String -> Q Exp
-d10ListExp = strD10ListFail >=> (lift :: [D10 a] -> Q Exp)
+d10ListExp :: String -> Q Exp
+d10ListExp = strD10ListFail >=> d10ListExp'
+
+d10ListExp' :: [D10 Integer] -> Q Exp
+d10ListExp' = lift
 
 ---------------------------------------------------
 
@@ -789,16 +795,19 @@ d10Pat'' (D10_Unsafe x) = [p| D10_Unsafe $(litP $ integerL $ toInteger x) |]
 --
 -- >>> :{
 --       case (strD10ListMaybe "56") of
---         Just $(d10ListPat [d10list|42|]) -> "A"
---         Just $(d10ListPat [d10list|56|]) -> "B"
---         _                                -> "C"
+--         Just $(d10ListPat "42") -> "A"
+--         Just $(d10ListPat "56") -> "B"
+--         _                       -> "C"
 -- >>> :}
 -- "B"
 --
 -- You may wish to use the 'd10list' quasi-quoter instead.
 
-d10ListPat :: Integral a => [D10 a] -> Q Pat
-d10ListPat = foldr (\x p -> [p| $(d10Pat'' x) : $(p) |]) [p| [] |]
+d10ListPat :: String -> Q Pat
+d10ListPat = strD10ListFail >=> d10ListPat'
+
+d10ListPat' :: [D10 Integer] -> Q Pat
+d10ListPat' = foldr (\x p -> [p| $(d10Pat'' x) : $(p) |]) [p| [] |]
 
 ---------------------------------------------------
 
@@ -840,9 +849,9 @@ d10ListPat = foldr (\x p -> [p| $(d10Pat'' x) : $(p) |]) [p| [] |]
 -- ... d10 must be between 0 and 9
 -- ...
 
-d10 :: forall a. (Lift a, Integral a) => QuasiQuoter
+d10 :: QuasiQuoter
 d10 = QuasiQuoter
-    { quoteExp  = strD10Fail >=> (lift :: D10 a -> Q Exp)
+    { quoteExp  = strD10Fail >=> d10Exp'
     , quotePat  = strD10Fail >=> d10Pat'
     , quoteType = \_ -> fail "d10 cannot be used in a type context"
     , quoteDec  = \_ -> fail "d10 cannot be used in a declaration context"
@@ -887,10 +896,10 @@ d10 = QuasiQuoter
 -- ... d10 must be between 0 and 9
 -- ...
 
-d10list :: forall a. (Lift a, Integral a) => QuasiQuoter
+d10list :: QuasiQuoter
 d10list = QuasiQuoter
-    { quoteExp  = strD10ListFail >=> (lift :: [D10 a] -> Q Exp)
-    , quotePat  = strD10ListFail >=> d10ListPat @a
+    { quoteExp  = strD10ListFail >=> d10ListExp'
+    , quotePat  = strD10ListFail >=> d10ListPat'
     , quoteType = \_ -> fail "d10list cannot be used in a type context"
     , quoteDec  = \_ -> fail "d10list cannot be used in a declaration context"
     }

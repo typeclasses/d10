@@ -45,27 +45,46 @@
 
 In module `Data.D10.Char`:
 
-  * Removed `isD10Str` (This function is still
-    available in `Data.D10.Predicate`)
-  * Type of `d10Exp` changed from
-    `Integral a => a -> Q Exp` to `Integer -> Q Exp`
-  * Type of `d10Pat` changed from
-    `D10 -> Q Pat` to `Integer -> Q Pat`
-  * Type of `d10ListPat` changed from
-    `[D10] -> Q Pat` to `String -> Q Pat`
+  * Removed `isD10Str` (see `Data.D10.Predicate`)
+  * Type of `d10Exp` changed
+    from `Integral a => a -> Q Exp`
+    to `Integer -> Q Exp`
+  * Type of `d10Pat` changed
+    from `D10 -> Q Pat`
+    to `Integer -> Q Pat`
+  * Type of `d10ListPat` changed
+    from `[D10] -> Q Pat`
+    to `String -> Q Pat`
 
 In module `Data.D10.Num`:
 
-  * Removed `isD10Str` (This function is still
-    available in `Data.D10.Predicate`)
-  * Type of `d10Exp` changed from
-    `Integral a => a -> Q Exp` to `Integer -> Q Exp`
-  * Type of `d10Pat` changed from
-    `Integral a => D10 a -> Q Pat` to `Integer -> Q Pat`
+  * Removed `isD10Str` (see `Data.D10.Predicate`)
+  * Type of `d10Exp` changed
+    from `(Integral b, Lift a, Num a) => b -> Q Exp`
+    to `Integer -> Q Exp`
+  * Type of `d10ListExp` changed
+    from `(Lift a, Num a) => String -> Q Exp`
+    to `String -> Q Exp`
+  * Type of `d10Pat` changed
+    from `Integral a => D10 a -> Q Pat`
+    to `Integer -> Q Pat`
+  * Type of `d10ListPat` changed
+    from `Integral a => [D10 a] -> Q Pat`
+    to `String -> Q Pat`
+  * Type of `d10` changed
+    from `(Lift a, Integral a) => QuasiQuoter`
+    to `QuasiQuoter`
+  * Type of `d10list` changed
+    from `(Lift a, Integral a) => QuasiQuoter`
+    to `QuasiQuoter`
+  * Although type variables no longer appear in the
+    various Template Haskell functions, the expressions
+    and patterns they generate are polymorphic.
 
 In module `Data.D10.Safe`:
 
   * The `D10` type now has instances of the `Data` and `Generic`.
-  * Type of `d10ListPat` changed from
-    `[D10] -> Q Pat` to `String -> Q Pat`
+  * Type of `d10ListPat` changed
+    from `[D10] -> Q Pat`
+    to `String -> Q Pat`
   * `d10Exp` and `d10Pat` have been removed.

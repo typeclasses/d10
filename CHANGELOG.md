@@ -43,18 +43,31 @@
 
 **v0.3**
 
-  * `Data.D10.Char` and `Data.D10.Num` no longer export `isD10Str`.
-    This function is still available in `Data.D10.Predicate`.
-  * The `D10` type in `Data.D10.Safe` now has instances of the
-    `Data` and `Generic` classes.
-  * The type of `d10Exp` has changed from
+In module `Data.D10.Char`:
+
+  * Removed `isD10Str` (This function is still
+    available in `Data.D10.Predicate`)
+  * Type of `d10Exp` changed from
     `Integral a => a -> Q Exp` to `Integer -> Q Exp`
-    in modules `Data.D10.Char`, `Data.D10.Num`, and `Data.D10.Safe`.
-  * The type of `Data.D10.Char.d10Pat` has changed from
-    `D10 -> Q Pat` to `Integer -> Q Pat`.
-  * The type of `d10ListPat` has changed from
+  * Type of `d10Pat` changed from
+    `D10 -> Q Pat` to `Integer -> Q Pat`
+  * Type of `d10ListPat` changed from
     `[D10] -> Q Pat` to `String -> Q Pat`
-    in modules `Data.D10.Char` and `Data.D10.Safe`.
-  * The type of `Data.D10.Num.d10Pat` has changed from
-    `Integral a => D10 a -> Q Pat` to `Integer -> Q Pat`.
-  * `d10Pat` has been removed from module `Data.D10.Safe`.
+
+In module `Data.D10.Num`:
+
+  * Removed `isD10Str` (This function is still
+    available in `Data.D10.Predicate`)
+  * Type of `d10Exp` changed from
+    `Integral a => a -> Q Exp` to `Integer -> Q Exp`
+  * Type of `d10Pat` changed from
+    `Integral a => D10 a -> Q Pat` to `Integer -> Q Pat`
+
+In module `Data.D10.Safe`:
+
+  * The `D10` type now has instances of the `Data` and `Generic`.
+  * Type of `d10Exp` changed from
+    `Integral a => a -> Q Exp` to `Integer -> Q Exp`
+  * Type of `d10ListPat` changed from
+    `[D10] -> Q Pat` to `String -> Q Pat`
+  * `d10Pat` has been removed.

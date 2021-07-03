@@ -240,9 +240,9 @@ prop_splicePat_examples = withTests 1 $ property $ do
         _                -> "C"
     qFails (d10Pat 12)
     "B" === case (strD10ListMaybe "56") of
-        Just $(d10ListPat [d10list|42|]) -> "A"
-        Just $(d10ListPat [d10list|56|]) -> "B"
-        _                                -> "C"
+        Just $(d10ListPat "42") -> "A"
+        Just $(d10ListPat "56") -> "B"
+        _                       -> "C"
 
 prop_qqPat_examples :: Property
 prop_qqPat_examples = withTests 1 $ property $ do

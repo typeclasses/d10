@@ -785,16 +785,16 @@ d10Pat' (D10_Unsafe x) = [p| D10_Unsafe $(litP $ charL x) |]
 --
 -- >>> :{
 --       case (strD10ListMaybe "56") of
---         Just $(d10ListPat [d10list|42|]) -> "A"
---         Just $(d10ListPat [d10list|56|]) -> "B"
---         _                                -> "C"
+--         Just $(d10ListPat "42") -> "A"
+--         Just $(d10ListPat "56") -> "B"
+--         _                       -> "C"
 -- >>> :}
 -- "B"
 --
 -- You may wish to use the 'd10list' quasi-quoter instead.
 
-d10ListPat :: [D10] -> Q Pat
-d10ListPat = foldr (\x p -> [p| $(d10Pat' x) : $(p) |]) [p| [] |]
+d10ListPat :: String -> Q Pat
+d10ListPat = strD10ListFail >=> foldr (\x p -> [p| $(d10Pat' x) : $(p) |]) [p| [] |]
 
 --------------------------------------------------
 
@@ -886,7 +886,7 @@ d10 = QuasiQuoter
 d10list :: QuasiQuoter
 d10list = QuasiQuoter
     { quoteExp  = strD10ListFail >=> d10ListExp'
-    , quotePat  = strD10ListFail >=> d10ListPat
+    , quotePat  = d10ListPat
     , quoteType = \_ -> fail "d10list cannot be used in a type context"
     , quoteDec  = \_ -> fail "d10list cannot be used in a declaration context"
     }

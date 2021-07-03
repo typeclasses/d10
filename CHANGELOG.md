@@ -45,50 +45,15 @@
 
   * `Data.D10.Char` and `Data.D10.Num` no longer export `isD10Str`.
     This function is still available in `Data.D10.Predicate`.
-
   * The `D10` type in `Data.D10.Safe` now has instances of the
     `Data` and `Generic` classes.
-
   * The type of `d10Exp` has changed from
-
-    ```haskell
-    d10Exp :: Integral a => a -> Q Exp
-    ```
-
-    to
-
-    ```haskell
-    d10Exp :: Integer -> Q Exp
-    ```
-
+    `Integral a => a -> Q Exp` to `Integer -> Q Exp`
     in modules `Data.D10.Char`, `Data.D10.Num`, and `Data.D10.Safe`.
-
-  * The type of `d10Pat` has changed from
-
-    ```haskell
-    d10Pat :: D10 -> Q Pat
-    ```
-
-    to
-
-    ```haskell
-    d10Pat :: Integer -> Q Pat
-    ```
-
-    in module `Data.D10.Char`.
-
-  * The type of `d10Pat` has changed from
-
-    ```haskell
-    d10Pat :: Integral a => D10 a -> Q Pat
-    ```
-
-    to
-
-    ```haskell
-    d10Pat :: Integer -> Q Pat
-    ```
-
-    in module `Data.D10.Num`.
-
+  * The type of `Data.D10.Char.d10Pat` has changed from
+    `D10 -> Q Pat` to `Integer -> Q Pat`.
+  * The type of `Data.D10.Char.d10ListPat` has changed from
+    `[D10] -> Q Pat` to `String -> Q Pat`.
+  * The type of `Data.D10.Num.d10Pat` has changed from
+    `Integral a => D10 a -> Q Pat` to `Integer -> Q Pat`.
   * `d10Pat` has been removed from module `Data.D10.Safe`.

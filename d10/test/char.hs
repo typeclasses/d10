@@ -12,7 +12,7 @@ import qualified Hedgehog.Gen as Gen
 import qualified Hedgehog.Range as Range
 
 import Control.Applicative ((<|>))
-import Control.Exception (try, SomeException, displayException)
+import Control.Exception (try, SomeException)
 import Control.Monad (when)
 import Control.Monad.Fail (MonadFail (fail))
 import Control.Monad.IO.Class (liftIO)
@@ -49,7 +49,7 @@ prop_lift_examples = withTests 1 $ property $ do
     d10Nat     [d10|7|] ===  7
     d10Integer [d10|7|] ===  7
     d10Int     [d10|7|] ===  7
-    d10Num     [d10|7|] ===  7
+    d10Num     [d10|7|] ===  (7 :: Integer)
 
 prop_d10Str :: Property
 prop_d10Str = property $ do
@@ -226,8 +226,8 @@ qFails (q :: Q a) =
 
 prop_spliceExp_examples :: Property
 prop_spliceExp_examples = withTests 1 $ property $ do
-    d10Nat $(d10Exp 5) === 5
-    qFails (d10Exp 12)
+    d10Nat $(d10Exp (5 :: Integer)) === 5
+    qFails (d10Exp (12 :: Integer))
     (d10Nat <$> $(d10ListExp "")) === []
     (d10Nat <$> $(d10ListExp "5")) === [5]
     (d10Nat <$> $(d10ListExp "58")) === [5,8]

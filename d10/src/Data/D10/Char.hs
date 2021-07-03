@@ -1,8 +1,3 @@
-{-# LANGUAGE DeriveLift       #-}
-{-# LANGUAGE InstanceSigs     #-}
-{-# LANGUAGE TemplateHaskell  #-}
-{-# LANGUAGE TypeApplications #-}
-
 -- | Defines a 'D10' type as a newtype for 'Char', where the
 -- values are restricted to characters between @'0'@ and @'9'@.
 --

@@ -1,6 +1,3 @@
-{-# language DerivingStrategies, GeneralizedNewtypeDeriving,
-    QuasiQuotes, ScopedTypeVariables, TemplateHaskell #-}
-
 import Prelude hiding (fail, (+), (-), (*))
 
 import Data.D10.Num

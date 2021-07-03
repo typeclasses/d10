@@ -30,7 +30,6 @@ module Data.D10.Safe
     , d10list
 
     -- * Splice expressions
-    , d10Exp
     , d10ListExp
 
     -- * Splice patterns
@@ -747,23 +746,6 @@ integralD10Fail x =
         Nothing -> fail "d10 must be between 0 and 9"
 
 ---------------------------------------------------
-
--- | Produces an expression of type 'D10' that can be used
--- in a Template Haskell splice.
---
--- >>> $(d10Exp 5)
--- D5
---
--- >>> $(d10Exp 12)
--- ...
--- ... d10 must be between 0 and 9
--- ...
---
--- You may also be interested in 'd10', a quasi-quoter which
--- does something similar.
-
-d10Exp :: Integer -> Q Exp
-d10Exp = integerD10Fail >=> (lift :: D10 -> Q Exp)
 
 -- | Produces an expression of type @['D10']@ that can be used
 -- in a Template Haskell splice.

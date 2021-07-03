@@ -66,8 +66,6 @@ In module `Data.D10.Num`:
 In module `Data.D10.Safe`:
 
   * The `D10` type now has instances of the `Data` and `Generic`.
-  * Type of `d10Exp` changed from
-    `Integral a => a -> Q Exp` to `Integer -> Q Exp`
   * Type of `d10ListPat` changed from
     `[D10] -> Q Pat` to `String -> Q Pat`
-  * `d10Pat` has been removed.
+  * `d10Exp` and `d10Pat` have been removed.

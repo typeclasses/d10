@@ -775,7 +775,7 @@ d10ListExp' xs = [| xs |]
 --       case (charD10Maybe '5') of
 --         Just $(d10Pat 4) -> "A"
 --         Just $(d10Pat 5) -> "B"
---         _                       -> "C"
+--         _                -> "C"
 -- >>> :}
 -- "B"
 --

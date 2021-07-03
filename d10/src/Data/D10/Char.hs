@@ -727,8 +727,8 @@ integralD10Fail x = integerD10Fail (toInteger x)
 -- You may also be interested in 'd10', a quasi-quoter which
 -- does something similar.
 
-d10Exp :: Integral a => a -> Q Exp
-d10Exp = integralD10Fail >=> d10Exp'
+d10Exp :: Integer -> Q Exp
+d10Exp = integerD10Fail >=> d10Exp'
 
 d10Exp' :: D10 -> Q Exp
 d10Exp' x = [| x |]

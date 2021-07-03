@@ -226,8 +226,8 @@ qFails (q :: Q a) =
 
 prop_spliceExp_examples :: Property
 prop_spliceExp_examples = withTests 1 $ property $ do
-    d10Nat $(d10Exp (5 :: Integer)) === 5
-    qFails (d10Exp (12 :: Integer))
+    d10Nat $(d10Exp 5) === 5
+    qFails (d10Exp 12)
     (d10Nat <$> $(d10ListExp "")) === []
     (d10Nat <$> $(d10ListExp "5")) === [5]
     (d10Nat <$> $(d10ListExp "58")) === [5,8]

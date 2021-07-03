@@ -45,3 +45,17 @@
 
   * `Data.D10.Char` and `Data.D10.Num` no longer export `isD10Str`.
     This function is still available in `Data.D10.Predicate`.
+
+  * The type of `d10Exp` has changed from
+
+    ```haskell
+    d10Exp :: Integral a => a -> Q Exp
+    ```
+
+    to
+
+    ```haskell
+    d10Exp :: Integer -> Q Exp
+    ```
+
+    in modules `Data.D10.Char`, `Data.D10.Num`, and `Data.D10.Safe`.

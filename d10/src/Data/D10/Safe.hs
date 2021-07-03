@@ -759,8 +759,8 @@ integralD10Fail x =
 -- You may also be interested in 'd10', a quasi-quoter which
 -- does something similar.
 
-d10Exp :: Integral a => a -> Q Exp
-d10Exp = integralD10Fail >=> (lift :: D10 -> Q Exp)
+d10Exp :: Integer -> Q Exp
+d10Exp = integerD10Fail >=> (lift :: D10 -> Q Exp)
 
 -- | Produces an expression of type @['D10']@ that can be used
 -- in a Template Haskell splice.

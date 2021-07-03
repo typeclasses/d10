@@ -733,8 +733,8 @@ integralD10Fail x = integerD10Fail (toInteger x)
 -- You may also be interested in 'd10', a quasi-quoter which
 -- does something similar.
 
-d10Exp :: forall a b. (Integral b, Lift a, Num a) => b -> Q Exp
-d10Exp = integralD10Fail >=> (lift :: D10 a -> Q Exp)
+d10Exp :: forall a. (Lift a, Num a) => Integer -> Q Exp
+d10Exp = integerD10Fail >=> (lift :: D10 a -> Q Exp)
 
 -- | Produces an expression of type @['D10' a]@ that can be used
 -- in a Template Haskell splice.

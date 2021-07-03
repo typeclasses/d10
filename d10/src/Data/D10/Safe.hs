@@ -806,7 +806,7 @@ d10ListPat' xs =
 -- | A single base-10 digit.
 --
 -- This isn't very useful, since you can just write 'D5'
--- instead of '[d10|5|]'. It is included only for completeness,
+-- instead of @['d10'|5|]@. It is included only for completeness,
 -- because each of the modules "Data.D10.Char" and "Data.D10.Num"
 -- defines a similar quasi-quoter.
 --

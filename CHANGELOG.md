@@ -87,4 +87,4 @@ In module `Data.D10.Safe`:
   * Type of `d10ListPat` changed
     from `[D10] -> Q Pat`
     to `String -> Q Pat`
-  * `d10Exp` and `d10Pat` have been removed.
+  * Removed `d10Exp`, `d10Pat`, and `d10`

@@ -26,7 +26,6 @@ module Data.D10.Safe
     -- $enum
 
     -- * Quasi-quoters
-    , d10
     , d10list
 
     -- * Splice expressions
@@ -802,57 +801,6 @@ d10ListPat' xs =
     return (ListP pats)
 
 ---------------------------------------------------
-
--- | A single base-10 digit.
---
--- This isn't very useful, since you can just write 'D5'
--- instead of @['d10'|5|]@. It is included only for completeness,
--- because each of the modules "Data.D10.Char" and "Data.D10.Num"
--- defines a similar quasi-quoter.
---
--- This quasi-quoter, when used as an expression, produces a
--- value of type 'D10'.
---
--- >>> [d10|5|]
--- D5
---
--- >>> [d10|a|]
--- ...
--- ... d10 must be between 0 and 9
--- ...
---
--- >>> [d10|58|]
--- ...
--- ... d10 must be a single character
--- ...
---
--- This quasi-quoter can also be used as a pattern.
---
--- >>> :{
---       case (charD10Maybe '5') of
---         Just [d10|4|] -> "A"
---         Just [d10|5|] -> "B"
---         _             -> "C"
--- >>> :}
--- "B"
---
--- >>> :{
---       case (charD10Maybe '5') of
---         Just [d10|x|] -> "A"
---         Just [d10|5|] -> "B"
---         _             -> "C"
--- >>> :}
--- ...
--- ... d10 must be between 0 and 9
--- ...
-
-d10 :: QuasiQuoter
-d10 = QuasiQuoter
-    { quoteExp  = strD10Fail >=> lift
-    , quotePat  = strD10Fail >=> d10Pat
-    , quoteType = \_ -> fail "d10 cannot be used in a type context"
-    , quoteDec  = \_ -> fail "d10 cannot be used in a declaration context"
-    }
 
 -- | A list of base-10 digits.
 --

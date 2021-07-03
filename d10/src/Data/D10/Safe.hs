@@ -798,19 +798,23 @@ d10Pat = dataToPatQ (const Nothing)
 --
 -- >>> :{
 --       case (strD10ListMaybe "56") of
---         Just $(d10ListPat [D4, D2]) -> "A"
---         Just $(d10ListPat [D5, D6]) -> "B"
---         _                                -> "C"
+--         Just $(d10ListPat "42") -> "A"
+--         Just $(d10ListPat "56") -> "B"
+--         _                       -> "C"
 -- >>> :}
 -- "B"
 --
--- You are unlikely to write any code that resembles this example,
--- since you can just write @[D4, D2]@ instead of @$(d10Pat [D4, D2])@.
--- Rather, this function exists to help implement other things
--- related to Template Haskell, such as 'd10list'.
+-- You may also be interested in 'd10list', a quasi-quoter which
+-- does something similar.
 
-d10ListPat :: [D10] -> Q Pat
-d10ListPat xs =
+d10ListPat :: String -> Q Pat
+d10ListPat = strD10ListFail >=> \xs ->
+  do
+    pats <- traverse d10Pat xs
+    return (ListP pats)
+
+d10ListPat' :: [D10] -> Q Pat
+d10ListPat' xs =
   do
     pats <- traverse d10Pat xs
     return (ListP pats)
@@ -910,7 +914,7 @@ d10 = QuasiQuoter
 d10list :: QuasiQuoter
 d10list = QuasiQuoter
     { quoteExp  = strD10ListFail >=> lift
-    , quotePat  = strD10ListFail >=> d10ListPat
+    , quotePat  = strD10ListFail >=> d10ListPat'
     , quoteType = \_ -> fail "d10list cannot be used in a type context"
     , quoteDec  = \_ -> fail "d10list cannot be used in a declaration context"
     }

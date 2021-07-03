@@ -52,8 +52,9 @@
     in modules `Data.D10.Char`, `Data.D10.Num`, and `Data.D10.Safe`.
   * The type of `Data.D10.Char.d10Pat` has changed from
     `D10 -> Q Pat` to `Integer -> Q Pat`.
-  * The type of `Data.D10.Char.d10ListPat` has changed from
-    `[D10] -> Q Pat` to `String -> Q Pat`.
+  * The type of `d10ListPat` has changed from
+    `[D10] -> Q Pat` to `String -> Q Pat`
+    in modules `Data.D10.Char` and `Data.D10.Safe`.
   * The type of `Data.D10.Num.d10Pat` has changed from
     `Integral a => D10 a -> Q Pat` to `Integer -> Q Pat`.
   * `d10Pat` has been removed from module `Data.D10.Safe`.

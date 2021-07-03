@@ -94,8 +94,9 @@ import Prelude            hiding (fail, (+), (-), (*))
 import qualified Prelude as P
 
 -- template-haskell
+import Language.Haskell.TH.Lib    (litP, charL)
 import Language.Haskell.TH.Quote  (QuasiQuoter (..))
-import Language.Haskell.TH.Syntax (Exp (..), Lift (lift), Lit (..), Pat (..), Q)
+import Language.Haskell.TH.Syntax (Exp (..), Lift, Pat (..), Q)
 
 -- $setup
 -- >>> :set -XQuasiQuotes
@@ -727,7 +728,10 @@ integralD10Fail x = integerD10Fail (toInteger x)
 -- does something similar.
 
 d10Exp :: Integral a => a -> Q Exp
-d10Exp = integralD10Fail >=> (lift :: D10 -> Q Exp)
+d10Exp = integralD10Fail >=> d10Exp'
+
+d10Exp' :: D10 -> Q Exp
+d10Exp' x = [| x |]
 
 -- | Produces an expression of type @['D10']@ that can be used
 -- in a Template Haskell splice.
@@ -750,7 +754,10 @@ d10Exp = integralD10Fail >=> (lift :: D10 -> Q Exp)
 -- does something similar.
 
 d10ListExp :: String -> Q Exp
-d10ListExp = strD10ListFail >=> (lift :: [D10] -> Q Exp)
+d10ListExp = strD10ListFail >=> d10ListExp'
+
+d10ListExp' :: [D10] -> Q Exp
+d10ListExp' xs = [| xs |]
 
 ---------------------------------------------------
 
@@ -768,8 +775,7 @@ d10ListExp = strD10ListFail >=> (lift :: [D10] -> Q Exp)
 -- You may wish to use the 'd10' quasi-quoter instead.
 
 d10Pat :: D10 -> Q Pat
-d10Pat x =
-    return (ConP 'D10_Unsafe [LitP (CharL (d10Char x))])
+d10Pat (D10_Unsafe x) = [p| D10_Unsafe $(litP $ charL x) |]
 
 -- | Produces a pattern that can be used in a splice
 -- to match a particular list of 'D10' values.
@@ -785,10 +791,7 @@ d10Pat x =
 -- You may wish to use the 'd10list' quasi-quoter instead.
 
 d10ListPat :: [D10] -> Q Pat
-d10ListPat xs =
-  do
-    pats <- traverse d10Pat xs
-    return (ListP pats)
+d10ListPat = foldr (\x p -> [p| $(d10Pat x) : $(p) |]) [p| [] |]
 
 --------------------------------------------------
 
@@ -832,7 +835,7 @@ d10ListPat xs =
 
 d10 :: QuasiQuoter
 d10 = QuasiQuoter
-    { quoteExp  = strD10Fail >=> lift
+    { quoteExp  = strD10Fail >=> d10Exp'
     , quotePat  = strD10Fail >=> d10Pat
     , quoteType = \_ -> fail "d10 cannot be used in a type context"
     , quoteDec  = \_ -> fail "d10 cannot be used in a declaration context"
@@ -879,7 +882,7 @@ d10 = QuasiQuoter
 
 d10list :: QuasiQuoter
 d10list = QuasiQuoter
-    { quoteExp  = strD10ListFail >=> lift
+    { quoteExp  = strD10ListFail >=> d10ListExp'
     , quotePat  = strD10ListFail >=> d10ListPat
     , quoteType = \_ -> fail "d10list cannot be used in a type context"
     , quoteDec  = \_ -> fail "d10list cannot be used in a declaration context"

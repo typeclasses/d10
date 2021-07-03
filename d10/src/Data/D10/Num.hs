@@ -97,8 +97,9 @@ import Prelude            hiding (fail, (+), (-), (*))
 import qualified Prelude as P
 
 -- template-haskell
+import Language.Haskell.TH.Lib    (litP, integerL)
 import Language.Haskell.TH.Quote  (QuasiQuoter (..))
-import Language.Haskell.TH.Syntax (Exp (..), Lift (lift), Lit (..), Pat (..), Q)
+import Language.Haskell.TH.Syntax (Exp (..), Lift (lift), Pat (..), Q)
 
 -- $setup
 -- >>> :set -XQuasiQuotes
@@ -766,17 +767,22 @@ d10ListExp = strD10ListFail >=> (lift :: [D10 a] -> Q Exp)
 --
 -- >>> :{
 --       case (charD10Maybe '5') of
---         Just $(d10Pat [d10|4|]) -> "A"
---         Just $(d10Pat [d10|5|]) -> "B"
+--         Just $(d10Pat 4) -> "A"
+--         Just $(d10Pat 5) -> "B"
 --         _                       -> "C"
 -- >>> :}
 -- "B"
 --
 -- You may wish to use the 'd10' quasi-quoter instead.
 
-d10Pat :: Integral a => D10 a -> Q Pat
-d10Pat x =
-    return (ConP 'D10_Unsafe [LitP (IntegerL (d10Integer x))])
+d10Pat :: Integer -> Q Pat
+d10Pat = integerD10Fail >=> d10Pat'
+
+d10Pat' :: D10 Integer -> Q Pat
+d10Pat' (D10_Unsafe x) = [p| D10_Unsafe $(litP $ integerL x) |]
+
+d10Pat'' :: Integral a => D10 a -> Q Pat
+d10Pat'' (D10_Unsafe x) = [p| D10_Unsafe $(litP $ integerL $ toInteger x) |]
 
 -- | Produces a pattern that can be used in a splice
 -- to match a particular list of @'D10' a@ values.
@@ -792,10 +798,7 @@ d10Pat x =
 -- You may wish to use the 'd10list' quasi-quoter instead.
 
 d10ListPat :: Integral a => [D10 a] -> Q Pat
-d10ListPat xs =
-  do
-    pats <- traverse d10Pat xs
-    return (ListP pats)
+d10ListPat = foldr (\x p -> [p| $(d10Pat'' x) : $(p) |]) [p| [] |]
 
 ---------------------------------------------------
 
@@ -840,7 +843,7 @@ d10ListPat xs =
 d10 :: forall a. (Lift a, Integral a) => QuasiQuoter
 d10 = QuasiQuoter
     { quoteExp  = strD10Fail >=> (lift :: D10 a -> Q Exp)
-    , quotePat  = strD10Fail >=> d10Pat @a
+    , quotePat  = strD10Fail >=> d10Pat'
     , quoteType = \_ -> fail "d10 cannot be used in a type context"
     , quoteDec  = \_ -> fail "d10 cannot be used in a declaration context"
     }

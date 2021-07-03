@@ -766,16 +766,19 @@ d10ListExp' xs = [| xs |]
 --
 -- >>> :{
 --       case (charD10Maybe '5') of
---         Just $(d10Pat [d10|4|]) -> "A"
---         Just $(d10Pat [d10|5|]) -> "B"
---         _                       -> "C"
+--         Just $(d10Pat 4) -> "A"
+--         Just $(d10Pat 5) -> "B"
+--         _                -> "C"
 -- >>> :}
 -- "B"
 --
 -- You may wish to use the 'd10' quasi-quoter instead.
 
-d10Pat :: D10 -> Q Pat
-d10Pat (D10_Unsafe x) = [p| D10_Unsafe $(litP $ charL x) |]
+d10Pat :: Integer -> Q Pat
+d10Pat = integerD10Fail >=> d10Pat'
+
+d10Pat' :: D10 -> Q Pat
+d10Pat' (D10_Unsafe x) = [p| D10_Unsafe $(litP $ charL x) |]
 
 -- | Produces a pattern that can be used in a splice
 -- to match a particular list of 'D10' values.
@@ -791,7 +794,7 @@ d10Pat (D10_Unsafe x) = [p| D10_Unsafe $(litP $ charL x) |]
 -- You may wish to use the 'd10list' quasi-quoter instead.
 
 d10ListPat :: [D10] -> Q Pat
-d10ListPat = foldr (\x p -> [p| $(d10Pat x) : $(p) |]) [p| [] |]
+d10ListPat = foldr (\x p -> [p| $(d10Pat' x) : $(p) |]) [p| [] |]
 
 --------------------------------------------------
 
@@ -836,7 +839,7 @@ d10ListPat = foldr (\x p -> [p| $(d10Pat x) : $(p) |]) [p| [] |]
 d10 :: QuasiQuoter
 d10 = QuasiQuoter
     { quoteExp  = strD10Fail >=> d10Exp'
-    , quotePat  = strD10Fail >=> d10Pat
+    , quotePat  = strD10Fail >=> d10Pat'
     , quoteType = \_ -> fail "d10 cannot be used in a type context"
     , quoteDec  = \_ -> fail "d10 cannot be used in a declaration context"
     }

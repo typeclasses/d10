@@ -235,9 +235,10 @@ prop_spliceExp_examples = withTests 1 $ property $ do
 prop_splicePat_examples :: Property
 prop_splicePat_examples = withTests 1 $ property $ do
     "B" === case (charD10Maybe '5') of
-        Just $(d10Pat [d10|4|]) -> "A"
-        Just $(d10Pat [d10|5|]) -> "B"
-        _                       -> "C"
+        Just $(d10Pat 4) -> "A"
+        Just $(d10Pat 5) -> "B"
+        _                -> "C"
+    qFails (d10Pat 12)
     "B" === case (strD10ListMaybe "56") of
         Just $(d10ListPat [d10list|42|]) -> "A"
         Just $(d10ListPat [d10list|56|]) -> "B"

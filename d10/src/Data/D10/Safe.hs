@@ -1,6 +1,8 @@
-{-# LANGUAGE DeriveLift       #-}
-{-# LANGUAGE TemplateHaskell  #-}
-{-# LANGUAGE TypeApplications #-}
+{-# LANGUAGE DeriveDataTypeable #-}
+{-# LANGUAGE DeriveGeneric      #-}
+{-# LANGUAGE DeriveLift         #-}
+{-# LANGUAGE TemplateHaskell    #-}
+{-# LANGUAGE TypeApplications   #-}
 
 -- | Defines a 'D10' type as
 -- @'D0' | 'D1' | 'D2' | 'D3' | 'D4' | 'D5' | 'D6' | 'D7' | 'D8' | 'D9'@.
@@ -32,7 +34,6 @@ module Data.D10.Safe
     , d10ListExp
 
     -- * Splice patterns
-    , d10Pat
     , d10ListPat
 
     -- * Converting between D10 and Char
@@ -88,6 +89,8 @@ module Data.D10.Safe
 -- base
 import Control.Monad      ((>=>))
 import Control.Monad.Fail (MonadFail (fail))
+import Data.Data          (Data)
+import GHC.Generics       (Generic)
 import Numeric.Natural    (Natural)
 import Prelude            hiding (fail, (+), (-), (*))
 
@@ -95,7 +98,7 @@ import qualified Prelude as P
 
 -- template-haskell
 import Language.Haskell.TH.Quote  (QuasiQuoter (..))
-import Language.Haskell.TH.Syntax (Exp (..), Lift (lift), Pat (..), Q)
+import Language.Haskell.TH.Syntax (Exp (..), Lift (lift), Pat (..), Q, dataToPatQ)
 
 -- $setup
 -- >>> :set -XQuasiQuotes
@@ -117,7 +120,7 @@ data D10
     | D7  -- ^ Seven
     | D8  -- ^ Eight
     | D9  -- ^ Nine
-    deriving (Bounded, Enum, Eq, Lift, Ord, Show)
+    deriving (Bounded, Enum, Eq, Lift, Ord, Show, Data, Generic)
 
 -- $bounded
 -- ==== Bounded
@@ -787,35 +790,8 @@ d10ListExp = strD10ListFail >=> (lift :: [D10] -> Q Exp)
 
 ---------------------------------------------------
 
--- | Produces a pattern that can be used in a splice
--- to match a particular 'D10' value.
---
--- >>> :{
---       case (charD10Maybe '5') of
---         Just $(d10Pat D4) -> "A"
---         Just $(d10Pat D5) -> "B"
---         _                 -> "C"
--- >>> :}
--- "B"
---
--- You are unlikely to write any code that resembles this example,
--- since you can just write @D4@ instead of @$(d10Pat D4)@.
--- Rather, this function exists to help implement other things
--- related to Template Haskell, such as 'd10ListPat' and 'd10'.
-
 d10Pat :: D10 -> Q Pat
-d10Pat x =
-    case x of
-        D0 -> [p| D0 |]
-        D1 -> [p| D1 |]
-        D2 -> [p| D2 |]
-        D3 -> [p| D3 |]
-        D4 -> [p| D4 |]
-        D5 -> [p| D5 |]
-        D6 -> [p| D6 |]
-        D7 -> [p| D7 |]
-        D8 -> [p| D8 |]
-        D9 -> [p| D9 |]
+d10Pat = dataToPatQ (const Nothing)
 
 -- | Produces a pattern that can be used in a splice
 -- to match a particular list of 'D10' values.

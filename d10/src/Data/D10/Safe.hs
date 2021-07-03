@@ -85,14 +85,9 @@ module Data.D10.Safe
 
     ) where
 
-import Data.D10.Predicate
-
 -- base
 import Control.Monad      ((>=>))
 import Control.Monad.Fail (MonadFail (fail))
-import Data.Char          (chr, ord)
-import Data.Monoid        (Endo (..))
-import GHC.Generics       (Generic)
 import Numeric.Natural    (Natural)
 import Prelude            hiding (fail, (+), (-), (*))
 
@@ -100,7 +95,7 @@ import qualified Prelude as P
 
 -- template-haskell
 import Language.Haskell.TH.Quote  (QuasiQuoter (..))
-import Language.Haskell.TH.Syntax (Exp (..), Lift (lift), Lit (..), Pat (..), Q)
+import Language.Haskell.TH.Syntax (Exp (..), Lift (lift), Pat (..), Q)
 
 -- $setup
 -- >>> :set -XQuasiQuotes

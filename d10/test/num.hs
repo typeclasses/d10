@@ -1,7 +1,7 @@
 import Prelude hiding (fail, (+), (-), (*))
 
-import Data.D10.Num
-import qualified Data.D10.Predicate as Predicate
+import D10.Num
+import qualified D10.Predicate as Predicate
 
 import Hedgehog
 import qualified Hedgehog.Gen as Gen

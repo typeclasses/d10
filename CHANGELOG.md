@@ -97,3 +97,12 @@ Other changes:
 **v0.3.0.1**
 
   * Support GHC 9.0, base 4.15, template-haskell 2.17
+
+**1**
+
+Removed the `Data` prefix from module names.
+
+  * `Data.D10.Char` is now `D10.Char`
+  * `Data.D10.Num` is now `D10.Num`
+  * `Data.D10.Predicate` is now `D10.Predicate`
+  * `Data.D10.Safe` is now `D10.Safe`

@@ -4,15 +4,15 @@
 -- The following modules define @D10@ types in different ways
 -- but are otherwise very similar to this one:
 --
--- * "Data.D10.Char"
--- * "Data.D10.Num"
+-- * "D10.Char"
+-- * "D10.Num"
 --
 -- This module is called "safe" because, in contrast with the
 -- alternative representations of a digit defined in the other
 -- modules, this 'D10' type does not include any possibility
 -- of representing an invalid non-digit value.
 
-module Data.D10.Safe
+module D10.Safe
     (
     -- * Type
       D10 (..)
@@ -289,7 +289,7 @@ integralMod10 x =
 -- | Convert a 'Char' to a 'D10' if it is within the range
 -- @'0'@ to @'9'@, or produce 'Nothing' otherwise.
 --
--- @'Data.D10.Predicate.isD10Char' x = 'Data.Maybe.isJust' ('charD10Maybe' x)@
+-- @'D10.Predicate.isD10Char' x = 'Data.Maybe.isJust' ('charD10Maybe' x)@
 --
 -- 'charD10Fail' is a more general version of this function.
 --
@@ -318,7 +318,7 @@ charD10Maybe x =
 -- character and that character is within the range @'0'@ to @'9'@,
 -- or produce 'Nothing' otherwise.
 --
--- @'Data.D10.Predicate.isD10Str' x = 'Data.Maybe.isJust' ('strD10Maybe' x)@
+-- @'D10.Predicate.isD10Str' x = 'Data.Maybe.isJust' ('strD10Maybe' x)@
 --
 -- 'strD10Fail' is a more general version of this function.
 --
@@ -339,7 +339,7 @@ strD10Maybe _   = Nothing
 -- in the string are within the range @'0'@ to @'9'@, or produce
 -- 'Nothing' otherwise.
 --
--- @'Data.D10.Predicate.isD10ListStr' x = 'Data.Maybe.isJust' ('strD10ListMaybe' x)@
+-- @'D10.Predicate.isD10ListStr' x = 'Data.Maybe.isJust' ('strD10ListMaybe' x)@
 --
 -- 'strD10ListFail' is a more general version of this function.
 --
@@ -358,7 +358,7 @@ strD10ListMaybe = traverse charD10Maybe
 -- | Convert a 'Natural' to a 'D10' if it is less than 10,
 -- or produce 'Nothing' otherwise.
 --
--- @'Data.D10.Predicate.isD10Nat' x = 'Data.Maybe.isJust' ('natD10Maybe' x)@
+-- @'D10.Predicate.isD10Nat' x = 'Data.Maybe.isJust' ('natD10Maybe' x)@
 --
 -- 'integralD10Maybe', 'natD10Fail', and 'integralD10Fail'
 -- are more general versions of this function.
@@ -375,7 +375,7 @@ natD10Maybe = integralD10Maybe
 -- | Convert an 'Integer' to a 'D10' if it is within the range 0 to 9,
 -- or produce 'Nothing' otherwise.
 --
--- @'Data.D10.Predicate.isD10Integer' x = 'Data.Maybe.isJust' ('integerD10Maybe' x)@
+-- @'D10.Predicate.isD10Integer' x = 'Data.Maybe.isJust' ('integerD10Maybe' x)@
 --
 -- 'integralD10Maybe', 'integerD10Fail', and 'integralD10Fail'
 -- are more general versions of this function.
@@ -395,7 +395,7 @@ integerD10Maybe = integralD10Maybe
 -- | Convert an 'Int' to a 'D10' if it is within the range 0 to 9,
 -- or produce 'Nothing' otherwise.
 --
--- @'Data.D10.Predicate.isD10Int' x = 'Data.Maybe.isJust' ('intD10Maybe' x)@
+-- @'D10.Predicate.isD10Int' x = 'Data.Maybe.isJust' ('intD10Maybe' x)@
 --
 -- 'integralD10Maybe', 'intD10Fail', and 'integralD10Fail'
 -- are more general versions of this function.
@@ -416,7 +416,7 @@ intD10Maybe = integralD10Maybe
 -- instance, or produce 'Nothing' if the number falls outside the
 -- range 0 to 9.
 --
--- @'Data.D10.Predicate.isD10Integral' x = 'Data.Maybe.isJust' ('integralD10Maybe' x)@
+-- @'D10.Predicate.isD10Integral' x = 'Data.Maybe.isJust' ('integralD10Maybe' x)@
 --
 -- Specialized versions of this function include 'natD10Maybe',
 -- 'integerD10Maybe', and 'intD10Maybe'.

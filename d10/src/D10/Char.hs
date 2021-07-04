@@ -1,14 +1,13 @@
--- | Defines a 'D10' type as a newtype for any type with an
--- instance of the 'Num' class, where the values are restricted
--- to numbers between @'fromInteger' 0@ and @'fromInteger' 9@.
+-- | Defines a 'D10' type as a newtype for 'Char', where the
+-- values are restricted to characters between @'0'@ and @'9'@.
 --
 -- The following modules define @D10@ types in different ways
 -- but are otherwise very similar to this one:
 --
--- * "Data.D10.Char"
--- * "Data.D10.Safe"
+-- * "D10.Num"
+-- * "D10.Safe"
 
-module Data.D10.Num
+module D10.Char
     (
     -- * Type
       D10 (..)
@@ -77,7 +76,7 @@ module Data.D10.Num
 
     ) where
 
-import Data.D10.Predicate
+import D10.Predicate
 
 -- base
 import Control.Monad      ((>=>))
@@ -90,31 +89,25 @@ import Prelude            hiding (fail, (+), (-), (*))
 import qualified Prelude as P
 
 -- template-haskell
-import Language.Haskell.TH.Lib    (litP, integerL)
+import Language.Haskell.TH.Lib    (litP, charL)
 import Language.Haskell.TH.Quote  (QuasiQuoter (..))
 import Language.Haskell.TH.Syntax (Exp (..), Lift, Pat (..), Q)
 
 ---------------------------------------------------
 
--- | A value of some numeric type @a@ between
--- @'fromInteger' 0@ and @'fromInteger' 9@.
+-- | A 'Char' value between @'0'@ and @'9'@.
 --
--- The "Data.D10.Num" module provides many functions for
+-- The "D10.Char" module provides many functions for
 -- constructing 'D10' values, including:
 --
 -- * @'integerD10Maybe' :: 'Integer' -> 'Maybe' 'D10'@
 -- * @'integerMod10' :: 'Integer' -> 'D10'@
 --
--- There are also several ways to safely write 'D10' literals
--- using Template Haskell:
---
--- * With the @QuasiQuotes@ GHC extension enabled, you can write
---   use the quasi-quoters 'd10' and 'd10list'.
--- * With the @TemplateHaskell@ GHC extension enabled, you can
---   splice expressions produced by 'd10Exp' and 'd10ListExp'.
+-- With the @QuasiQuotes@ GHC extension enabled, you can write
+-- 'D10' literals using the quasi-quoters 'd10' and 'd10list'.
 
-newtype D10 a =
-    D10_Unsafe a
+newtype D10 =
+    D10_Unsafe Char
       -- ^ The constructor's name include the word "unsafe" as a reminder
       --   that you should generally avoid using it directly, because it
       --   allows constructing invalid 'D10' values.
@@ -123,16 +116,16 @@ newtype D10 a =
 -- $bounded
 -- ==== Bounded
 --
--- >>> minBound :: D10 Integer
+-- >>> minBound :: D10
 -- [d10|0|]
 --
--- >>> maxBound :: D10 Integer
+-- >>> maxBound :: D10
 -- [d10|9|]
 
-instance Num a => Bounded (D10 a)
+instance Bounded D10
   where
-    minBound = D10_Unsafe 0
-    maxBound = D10_Unsafe 9
+    minBound = D10_Unsafe '0'
+    maxBound = D10_Unsafe '9'
 
 -- $enum
 -- ==== Enum
@@ -149,46 +142,48 @@ instance Num a => Bounded (D10 a)
 -- >>> [ [d10|1|], [d10|3|] .. ]
 -- [d10list|13579|]
 --
--- >>> [ minBound .. maxBound ] :: [D10 Integer]
+-- >>> [ minBound .. maxBound ] :: [D10]
 -- [d10list|0123456789|]
 
-instance Integral a => Enum (D10 a)
+instance Enum D10
   where
-    fromEnum :: D10 a -> Int
+    fromEnum :: D10 -> Int
     fromEnum = d10Int
 
-    toEnum :: Int -> D10 a
+    toEnum :: Int -> D10
     toEnum = either error id . intD10Either
 
-    enumFrom :: D10 a -> [D10 a]
+    enumFrom :: D10 -> [D10]
     enumFrom x = enumFromTo x maxBound
 
-    enumFromThen :: D10 a -> D10 a -> [D10 a]
+    enumFromThen :: D10 -> D10 -> [D10]
     enumFromThen x y = enumFromThenTo x y bound
       where
         bound | fromEnum y >= fromEnum x = maxBound
               | otherwise                = minBound
 
-    succ (D10_Unsafe 9) = error "D10 overflow"
+    succ :: D10 -> D10
+    succ (D10_Unsafe '9') = error "D10 overflow"
     succ (D10_Unsafe x) = D10_Unsafe (succ x)
 
-    pred (D10_Unsafe 0) = error "D10 underflow"
+    pred :: D10 -> D10
+    pred (D10_Unsafe '0') = error "D10 underflow"
     pred (D10_Unsafe x) = D10_Unsafe (pred x)
 
 ---------------------------------------------------
 
 -- | Shows base-10 digits using the quasiquoters defined in
--- "Data.D10.Char". A single digit is displayed using 'd10'.
+-- "D10.Char". A single digit is displayed using 'd10'.
 -- A list of digits is displayed using 'd10list'.
 
-instance Integral a => Show (D10 a) where
+instance Show D10 where
     showsPrec _ x = showString "[d10|"     . showsChar x . showString "|]"
     showList xs   = showString "[d10list|" . showsStr xs . showString "|]"
 
-showsChar :: Integral a => D10 a -> ShowS
-showsChar = showChar . d10Char
+showsChar :: D10 -> ShowS
+showsChar (D10_Unsafe x) = showChar x
 
-showsStr :: Integral a => [D10 a] -> ShowS
+showsStr :: [D10] -> ShowS
 showsStr = appEndo . foldMap (Endo . showsChar)
 
 ---------------------------------------------------
@@ -198,8 +193,8 @@ showsStr = appEndo . foldMap (Endo . showsChar)
 -- >>> d10Char [d10|7|]
 -- '7'
 
-d10Char :: Integral a => D10 a -> Char
-d10Char (D10_Unsafe x) = chr (ord '0' P.+ fromIntegral x)
+d10Char :: D10 -> Char
+d10Char (D10_Unsafe x) = x
 
 -- | Convert a 'D10' to a 'String'.
 --
@@ -208,8 +203,8 @@ d10Char (D10_Unsafe x) = chr (ord '0' P.+ fromIntegral x)
 -- >>> d10Str [d10|7|]
 -- "7"
 
-d10Str :: Integral a => D10 a -> String
-d10Str x = [d10Char x]
+d10Str :: D10 -> String
+d10Str (D10_Unsafe x) = [x]
 
 -- | Convert a 'D10' to a 'Natural'.
 --
@@ -218,8 +213,8 @@ d10Str x = [d10Char x]
 -- >>> d10Nat [d10|7|]
 -- 7
 
-d10Nat :: Integral a => D10 a -> Natural
-d10Nat = d10Num
+d10Nat :: D10 -> Natural
+d10Nat (D10_Unsafe x) = fromIntegral (ord x P.- ord '0')
 
 -- | Convert a 'D10' to an 'Integer'.
 --
@@ -228,8 +223,8 @@ d10Nat = d10Num
 -- >>> d10Integer [d10|7|]
 -- 7
 
-d10Integer :: Integral a => D10 a -> Integer
-d10Integer = d10Num
+d10Integer :: D10 -> Integer
+d10Integer (D10_Unsafe x) = toInteger (ord x P.- ord '0')
 
 -- | Convert a 'D10' to an 'Int'.
 --
@@ -238,8 +233,8 @@ d10Integer = d10Num
 -- >>> d10Int [d10|7|]
 -- 7
 
-d10Int :: Integral a => D10 a -> Int
-d10Int = d10Num
+d10Int :: D10 -> Int
+d10Int (D10_Unsafe x) = ord x P.- ord '0'
 
 -- | Convert a 'D10' to any kind of number with a 'Num' instance.
 --
@@ -249,8 +244,8 @@ d10Int = d10Num
 -- >>> d10Num [d10|7|] :: Integer
 -- 7
 
-d10Num :: (Integral b, Num a) => D10 b -> a
-d10Num (D10_Unsafe x) = fromIntegral x
+d10Num :: Num a => D10 -> a
+d10Num (D10_Unsafe x) = fromIntegral (ord x P.- ord '0')
 
 ---------------------------------------------------
 
@@ -258,37 +253,37 @@ d10Num (D10_Unsafe x) = fromIntegral x
 --
 -- 'integralMod10' is a more general version of this function.
 --
--- >>> natMod10 56 :: D10 Int
+-- >>> natMod10 56
 -- [d10|6|]
 
-natMod10 :: Num a => Natural -> D10 a
-natMod10 = integralMod10
+natMod10 :: Natural -> D10
+natMod10 x = D10_Unsafe (chr (ord '0' P.+ fromIntegral (x `mod` 10)))
 
 -- | The 'D10' which is uniquely congruent modulo 10 to the given 'Integer'.
 --
 -- 'integralMod10' is a more general version of this function.
 --
--- >>> integerMod10 56 :: D10 Int
+-- >>> integerMod10 56
 -- [d10|6|]
 --
--- >>> integerMod10 (-56) :: D10 Int
+-- >>> integerMod10 (-56)
 -- [d10|4|]
 
-integerMod10 :: Num a => Integer -> D10 a
-integerMod10 = integralMod10
+integerMod10 :: Integer -> D10
+integerMod10 x = D10_Unsafe (chr (ord '0' P.+ fromInteger (x `mod` 10)))
 
 -- | The 'D10' which is uniquely congruent modulo 10 to the given 'Int'.
 --
 -- 'integralMod10' is a more general version of this function.
 --
--- >>> intMod10 56 :: D10 Int
+-- >>> intMod10 56
 -- [d10|6|]
 --
--- >>> intMod10 (-56) :: D10 Int
+-- >>> intMod10 (-56)
 -- [d10|4|]
 
-intMod10 :: Num a => Int -> D10 a
-intMod10 = integralMod10
+intMod10 :: Int -> D10
+intMod10 x = D10_Unsafe (chr (ord '0' P.+ (x `mod` 10)))
 
 -- | The 'D10' which is uniquely congruent modulo 10 to the given number
 -- (whose type must have an instance of the 'Integral' class).
@@ -296,21 +291,21 @@ intMod10 = integralMod10
 -- Specialized versions of this function include 'natMod10',
 -- 'integerMod10', and 'intMod10'.
 --
--- >>> integralMod10 (56 :: Integer) :: D10 Int
+-- >>> integralMod10 (56 :: Integer)
 -- [d10|6|]
 --
--- >>> integralMod10 ((-56) :: Integer) :: D10 Int
+-- >>> integralMod10 ((-56) :: Integer)
 -- [d10|4|]
 
-integralMod10 :: (Num b, Integral a) => a -> D10 b
-integralMod10 x = D10_Unsafe (fromIntegral (x `mod` 10))
+integralMod10 :: Integral a => a -> D10
+integralMod10 x = D10_Unsafe (chr (ord '0' P.+ fromIntegral (x `mod` 10)))
 
 ---------------------------------------------------
 
 -- | Convert a 'Char' to a 'D10' if it is within the range
 -- @'0'@ to @'9'@, or produce 'Nothing' otherwise.
 --
--- @'Data.D10.Predicate.isD10Char' x = 'Data.Maybe.isJust' ('charD10Maybe' x)@
+-- @'D10.Predicate.isD10Char' x = 'Data.Maybe.isJust' ('charD10Maybe' x)@
 --
 -- 'charD10Fail' is a more general version of this function.
 --
@@ -320,16 +315,16 @@ integralMod10 x = D10_Unsafe (fromIntegral (x `mod` 10))
 -- >>> charD10Maybe 'a'
 -- Nothing
 
-charD10Maybe :: Num a => Char -> Maybe (D10 a)
+charD10Maybe :: Char -> Maybe D10
 charD10Maybe x
-        | isD10Char x  =  Just (D10_Unsafe (fromIntegral (ord x P.- ord '0')))
+        | isD10Char x  =  Just (D10_Unsafe x)
         | otherwise    =  Nothing
 
 -- | Convert a 'String' to a 'D10' if it consists of exactly one
 -- character and that character is within the range @'0'@ to @'9'@,
 -- or produce 'Nothing' otherwise.
 --
--- @'Data.D10.Predicate.isD10Str' x = 'Data.Maybe.isJust' ('strD10Maybe' x)@
+-- @'D10.Predicate.isD10Str' x = 'Data.Maybe.isJust' ('strD10Maybe' x)@
 --
 -- 'strD10Fail' is a more general version of this function.
 --
@@ -342,7 +337,7 @@ charD10Maybe x
 -- >>> strD10Maybe "58"
 -- Nothing
 
-strD10Maybe :: Num a => String -> Maybe (D10 a)
+strD10Maybe :: String -> Maybe D10
 strD10Maybe [x] = charD10Maybe x
 strD10Maybe _   = Nothing
 
@@ -350,7 +345,7 @@ strD10Maybe _   = Nothing
 -- in the string are within the range @'0'@ to @'9'@, or produce
 -- 'Nothing' otherwise.
 --
--- @'Data.D10.Predicate.isD10ListStr' x = 'Data.Maybe.isJust' ('strD10ListMaybe' x)@
+-- @'D10.Predicate.isD10ListStr' x = 'Data.Maybe.isJust' ('strD10ListMaybe' x)@
 --
 -- 'strD10ListFail' is a more general version of this function.
 --
@@ -363,13 +358,13 @@ strD10Maybe _   = Nothing
 -- >>> strD10ListMaybe "58"
 -- Just [d10list|58|]
 
-strD10ListMaybe :: Num a => String -> Maybe [D10 a]
+strD10ListMaybe :: String -> Maybe [D10]
 strD10ListMaybe = traverse charD10Maybe
 
 -- | Convert a 'Natural' to a 'D10' if it is less than 10,
 -- or produce 'Nothing' otherwise.
 --
--- @'Data.D10.Predicate.isD10Nat' x = 'Data.Maybe.isJust' ('natD10Maybe' x)@
+-- @'D10.Predicate.isD10Nat' x = 'Data.Maybe.isJust' ('natD10Maybe' x)@
 --
 -- 'integralD10Maybe', 'natD10Fail', and 'integralD10Fail'
 -- are more general versions of this function.
@@ -380,15 +375,15 @@ strD10ListMaybe = traverse charD10Maybe
 -- >>> natD10Maybe 12
 -- Nothing
 
-natD10Maybe :: Num a => Natural -> Maybe (D10 a)
+natD10Maybe :: Natural -> Maybe D10
 natD10Maybe x
-        | isD10Nat x  =  Just (D10_Unsafe (fromIntegral x))
+        | isD10Nat x  =  Just (D10_Unsafe (chr (fromIntegral x P.+ ord '0')))
         | otherwise   =  Nothing
 
 -- | Convert an 'Integer' to a 'D10' if it is within the range 0 to 9,
 -- or produce 'Nothing' otherwise.
 --
--- @'Data.D10.Predicate.isD10Integer' x = 'Data.Maybe.isJust' ('integerD10Maybe' x)@
+-- @'D10.Predicate.isD10Integer' x = 'Data.Maybe.isJust' ('integerD10Maybe' x)@
 --
 -- 'integralD10Maybe', 'integerD10Fail', and 'integralD10Fail'
 -- are more general versions of this function.
@@ -402,15 +397,15 @@ natD10Maybe x
 -- >>> integerD10Maybe (-5)
 -- Nothing
 
-integerD10Maybe :: Num a => Integer -> Maybe (D10 a)
+integerD10Maybe :: Integer -> Maybe D10
 integerD10Maybe x
-        | isD10Integer x  =  Just (D10_Unsafe (fromIntegral x))
+        | isD10Integer x  =  Just (D10_Unsafe (chr (fromInteger x P.+ ord '0')))
         | otherwise       =  Nothing
 
 -- | Convert an 'Int' to a 'D10' if it is within the range 0 to 9,
 -- or produce 'Nothing' otherwise.
 --
--- @'Data.D10.Predicate.isD10Int' x = 'Data.Maybe.isJust' ('intD10Maybe' x)@
+-- @'D10.Predicate.isD10Int' x = 'Data.Maybe.isJust' ('intD10Maybe' x)@
 --
 -- 'integralD10Maybe', 'intD10Fail', and 'integralD10Fail'
 -- are more general versions of this function.
@@ -424,16 +419,16 @@ integerD10Maybe x
 -- >>> intD10Maybe (-5)
 -- Nothing
 
-intD10Maybe :: Num a => Int -> Maybe (D10 a)
+intD10Maybe :: Int -> Maybe D10
 intD10Maybe x
-        | isD10Int x  =  Just (D10_Unsafe (fromIntegral x))
+        | isD10Int x  =  Just (D10_Unsafe (chr (x P.+ ord '0')))
         | otherwise   =  Nothing
 
 -- | Construct a 'D10' from any kind of number with an 'Integral'
 -- instance, or produce 'Nothing' if the number falls outside the
 -- range 0 to 9.
 --
--- @'Data.D10.Predicate.isD10Integral' x = 'Data.Maybe.isJust' ('integralD10Maybe' x)@
+-- @'D10.Predicate.isD10Integral' x = 'Data.Maybe.isJust' ('integralD10Maybe' x)@
 --
 -- Specialized versions of this function include 'natD10Maybe',
 -- 'integerD10Maybe', and 'intD10Maybe'.
@@ -449,7 +444,7 @@ intD10Maybe x
 -- >>> integralD10Maybe ((-5) :: Integer)
 -- Nothing
 
-integralD10Maybe :: (Num b, Integral a) => a -> Maybe (D10 b)
+integralD10Maybe :: Integral a => a -> Maybe D10
 integralD10Maybe x = integerD10Maybe (toInteger x)
 
 ---------------------------------------------------
@@ -463,9 +458,9 @@ integralD10Maybe x = integerD10Maybe (toInteger x)
 -- >>> charD10Either 'a'
 -- Left "d10 must be between 0 and 9"
 
-charD10Either :: Num a => Char -> Either String (D10 a)
+charD10Either :: Char -> Either String D10
 charD10Either x
-        | isD10Char x  =  Right (D10_Unsafe (fromIntegral (ord x P.- ord '0')))
+        | isD10Char x  =  Right (D10_Unsafe x)
         | otherwise    =  Left "d10 must be between 0 and 9"
 
 -- | Convert a 'String' to a 'D10' if it consists of a single
@@ -481,7 +476,7 @@ charD10Either x
 -- >>> strD10Either "58"
 -- Left "d10 must be a single character"
 
-strD10Either :: Num a => String -> Either String (D10 a)
+strD10Either :: String -> Either String D10
 strD10Either [x]         =  charD10Either x
 strD10Either _           =  Left "d10 must be a single character"
 
@@ -498,7 +493,7 @@ strD10Either _           =  Left "d10 must be a single character"
 -- >>> strD10ListEither "58"
 -- Right [d10list|58|]
 
-strD10ListEither :: Num a => String -> Either String [D10 a]
+strD10ListEither :: String -> Either String [D10]
 strD10ListEither = traverse charD10Either
 
 -- | Convert a 'Natural' to a 'D10' if it is less than 10,
@@ -510,7 +505,7 @@ strD10ListEither = traverse charD10Either
 -- >>> natD10Either 12
 -- Left "d10 must be less than 10"
 
-natD10Either :: Num a => Natural -> Either String (D10 a)
+natD10Either :: Natural -> Either String D10
 natD10Either x =
     case (natD10Maybe x) of
         Just y  -> Right y
@@ -528,7 +523,7 @@ natD10Either x =
 -- >>> integerD10Either (-5)
 -- Left "d10 must be between 0 and 9"
 
-integerD10Either :: Num a => Integer -> Either String (D10 a)
+integerD10Either :: Integer -> Either String D10
 integerD10Either x =
     case (integerD10Maybe x) of
         Just y  -> Right y
@@ -546,7 +541,7 @@ integerD10Either x =
 -- >>> intD10Either (-5)
 -- Left "d10 must be between 0 and 9"
 
-intD10Either :: Num a => Int -> Either String (D10 a)
+intD10Either :: Int -> Either String D10
 intD10Either x =
     case (intD10Maybe x) of
         Just y  ->  Right y
@@ -565,7 +560,7 @@ intD10Either x =
 -- >>> integralD10Either ((-5) :: Integer)
 -- Left "d10 must be between 0 and 9"
 
-integralD10Either :: (Num b, Integral a) => a -> Either String (D10 b)
+integralD10Either :: Integral a => a -> Either String D10
 integralD10Either x = integerD10Either (toInteger x)
 
 ---------------------------------------------------
@@ -575,15 +570,15 @@ integralD10Either x = integerD10Either (toInteger x)
 --
 -- 'charD10Maybe' is a specialized version of this function.
 --
--- >>> charD10Fail '5' :: IO (D10 Int)
+-- >>> charD10Fail '5' :: IO D10
 -- [d10|5|]
 --
--- >>> charD10Fail 'a' :: IO (D10 Int)
+-- >>> charD10Fail 'a' :: IO D10
 -- *** Exception: user error (d10 must be between 0 and 9)
 
-charD10Fail :: (Num a, MonadFail m) => Char -> m (D10 a)
+charD10Fail :: MonadFail m => Char -> m D10
 charD10Fail x
-        | isD10Char x  =  return (D10_Unsafe (fromIntegral (ord x P.- ord '0')))
+        | isD10Char x  =  return (D10_Unsafe x)
         | otherwise    =  fail "d10 must be between 0 and 9"
 
 -- | Convert a 'String' to a 'D10' if it consists of a single
@@ -592,16 +587,16 @@ charD10Fail x
 --
 -- 'strD10Maybe' is a specialized version of this function.
 --
--- >>> strD10Fail "5" :: IO (D10 Int)
+-- >>> strD10Fail "5" :: IO D10
 -- [d10|5|]
 --
--- >>> strD10Fail "a" :: IO (D10 Int)
+-- >>> strD10Fail "a" :: IO D10
 -- *** Exception: user error (d10 must be between 0 and 9)
 --
--- >>> strD10Fail "58" :: IO (D10 Int)
+-- >>> strD10Fail "58" :: IO D10
 -- *** Exception: user error (d10 must be a single character)
 
-strD10Fail :: (Num a, MonadFail m) => String -> m (D10 a)
+strD10Fail :: MonadFail m => String -> m D10
 strD10Fail [x]         =  charD10Fail x
 strD10Fail _           =  fail "d10 must be a single character"
 
@@ -611,16 +606,16 @@ strD10Fail _           =  fail "d10 must be a single character"
 --
 -- 'strD10ListMaybe' is a specialized version of this function.
 --
--- >>> strD10ListFail "5" :: IO [D10 Int]
+-- >>> strD10ListFail "5" :: IO [D10]
 -- [d10list|5|]
 --
--- >>> strD10ListFail "a" :: IO [D10 Int]
+-- >>> strD10ListFail "a" :: IO [D10]
 -- *** Exception: user error (d10 must be between 0 and 9)
 --
--- >>> strD10ListFail "58" :: IO [D10 Int]
+-- >>> strD10ListFail "58" :: IO [D10]
 -- [d10list|58|]
 
-strD10ListFail :: (Num a, MonadFail m) => String -> m [D10 a]
+strD10ListFail :: MonadFail m => String -> m [D10]
 strD10ListFail = traverse charD10Fail
 
 -- | Convert a 'Natural' to a 'D10' if it is less than 10,
@@ -630,13 +625,13 @@ strD10ListFail = traverse charD10Fail
 --
 -- 'integralD10Fail' is a more general version of this function.
 --
--- >>> natD10Fail 5 :: IO (D10 Int)
+-- >>> natD10Fail 5 :: IO D10
 -- [d10|5|]
 --
--- >>> natD10Fail 12 :: IO (D10 Int)
+-- >>> natD10Fail 12 :: IO D10
 -- *** Exception: user error (d10 must be less than 10)
 
-natD10Fail :: (Num a, MonadFail m) => Natural -> m (D10 a)
+natD10Fail :: MonadFail m => Natural -> m D10
 natD10Fail x =
     case (natD10Maybe x) of
         Just y  -> return y
@@ -649,16 +644,16 @@ natD10Fail x =
 --
 -- 'integralD10Fail' is a more general version of this function.
 --
--- >>> integerD10Fail 5 :: IO (D10 Int)
+-- >>> integerD10Fail 5 :: IO D10
 -- [d10|5|]
 --
--- >>> integerD10Fail 12 :: IO (D10 Int)
+-- >>> integerD10Fail 12 :: IO D10
 -- *** Exception: user error (d10 must be between 0 and 9)
 --
--- >>> integerD10Fail (-5) :: IO (D10 Int)
+-- >>> integerD10Fail (-5) :: IO D10
 -- *** Exception: user error (d10 must be between 0 and 9)
 
-integerD10Fail :: (Num a, MonadFail m) => Integer -> m (D10 a)
+integerD10Fail :: MonadFail m => Integer -> m D10
 integerD10Fail x =
     case (integerD10Maybe x) of
         Just y  -> return y
@@ -671,16 +666,16 @@ integerD10Fail x =
 --
 -- 'integralD10Fail' is a more general version of this function.
 --
--- >>> intD10Fail 5 :: IO (D10 Int)
+-- >>> intD10Fail 5 :: IO D10
 -- [d10|5|]
 --
--- >>> intD10Fail 12 :: IO (D10 Int)
+-- >>> intD10Fail 12 :: IO D10
 -- *** Exception: user error (d10 must be between 0 and 9)
 --
--- >>> intD10Fail (-5) :: IO (D10 Int)
+-- >>> intD10Fail (-5) :: IO D10
 -- *** Exception: user error (d10 must be between 0 and 9)
 
-intD10Fail :: (Num a, MonadFail m) => Int -> m (D10 a)
+intD10Fail :: MonadFail m => Int -> m D10
 intD10Fail x =
     case (intD10Maybe x) of
         Just y  ->  return y
@@ -694,21 +689,21 @@ intD10Fail x =
 -- 'integralD10Maybe', 'natD10Fail', 'integerD10Fail', and
 -- 'intD10Fail' are all specialized versions of this function.
 --
--- >>> integralD10Fail (5 :: Integer) :: IO (D10 Int)
+-- >>> integralD10Fail (5 :: Integer) :: IO D10
 -- [d10|5|]
 --
--- >>> integralD10Fail (12 :: Integer) :: IO (D10 Int)
+-- >>> integralD10Fail (12 :: Integer) :: IO D10
 -- *** Exception: user error (d10 must be between 0 and 9)
 --
--- >>> integralD10Fail ((-5) :: Integer) :: IO (D10 Int)
+-- >>> integralD10Fail ((-5) :: Integer) :: IO D10
 -- *** Exception: user error (d10 must be between 0 and 9)
 
-integralD10Fail :: (Num b, Integral a, MonadFail m) => a -> m (D10 b)
+integralD10Fail :: (Integral a, MonadFail m) => a -> m D10
 integralD10Fail x = integerD10Fail (toInteger x)
 
 ---------------------------------------------------
 
--- | Produces an expression of type @'D10' a@ that can be used
+-- | Produces an expression of type 'D10' that can be used
 -- in a Template Haskell splice.
 --
 -- >>> d10Nat $(d10Exp 5)
@@ -725,10 +720,10 @@ integralD10Fail x = integerD10Fail (toInteger x)
 d10Exp :: Integer -> Q Exp
 d10Exp = integerD10Fail >=> d10Exp'
 
-d10Exp' :: D10 Integer -> Q Exp
-d10Exp' (D10_Unsafe x) = [| D10_Unsafe (fromInteger x) |]
+d10Exp' :: D10 -> Q Exp
+d10Exp' x = [| x |]
 
--- | Produces an expression of type @['D10' a]@ that can be used
+-- | Produces an expression of type @['D10']@ that can be used
 -- in a Template Haskell splice.
 --
 -- >>> d10Nat <$> $(d10ListExp "")
@@ -751,13 +746,13 @@ d10Exp' (D10_Unsafe x) = [| D10_Unsafe (fromInteger x) |]
 d10ListExp :: String -> Q Exp
 d10ListExp = strD10ListFail >=> d10ListExp'
 
-d10ListExp' :: [D10 Integer] -> Q Exp
+d10ListExp' :: [D10] -> Q Exp
 d10ListExp' xs = [| xs |]
 
 ---------------------------------------------------
 
 -- | Produces a pattern that can be used in a splice
--- to match a particular @'D10' a@ value.
+-- to match a particular 'D10' value.
 --
 -- >>> :{
 --       case (charD10Maybe '5') of
@@ -772,14 +767,11 @@ d10ListExp' xs = [| xs |]
 d10Pat :: Integer -> Q Pat
 d10Pat = integerD10Fail >=> d10Pat'
 
-d10Pat' :: D10 Integer -> Q Pat
-d10Pat' (D10_Unsafe x) = [p| D10_Unsafe $(litP $ integerL x) |]
-
-d10Pat'' :: Integral a => D10 a -> Q Pat
-d10Pat'' (D10_Unsafe x) = [p| D10_Unsafe $(litP $ integerL $ toInteger x) |]
+d10Pat' :: D10 -> Q Pat
+d10Pat' (D10_Unsafe x) = [p| D10_Unsafe $(litP $ charL x) |]
 
 -- | Produces a pattern that can be used in a splice
--- to match a particular list of @'D10' a@ values.
+-- to match a particular list of 'D10' values.
 --
 -- >>> :{
 --       case (strD10ListMaybe "56") of
@@ -792,17 +784,14 @@ d10Pat'' (D10_Unsafe x) = [p| D10_Unsafe $(litP $ integerL $ toInteger x) |]
 -- You may wish to use the 'd10list' quasi-quoter instead.
 
 d10ListPat :: String -> Q Pat
-d10ListPat = strD10ListFail >=> d10ListPat'
+d10ListPat = strD10ListFail >=> foldr (\x p -> [p| $(d10Pat' x) : $(p) |]) [p| [] |]
 
-d10ListPat' :: [D10 Integer] -> Q Pat
-d10ListPat' = foldr (\x p -> [p| $(d10Pat'' x) : $(p) |]) [p| [] |]
-
----------------------------------------------------
+--------------------------------------------------
 
 -- | A single base-10 digit.
 --
 -- This quasi-quoter, when used as an expression, produces a
--- value of type @'D10' a@.
+-- value of type 'D10'.
 --
 -- >>> d10Nat [d10|5|]
 -- 5
@@ -848,7 +837,7 @@ d10 = QuasiQuoter
 -- | A list of base-10 digits.
 --
 -- This quasi-quoter, when used as an expression, produces a
--- value of type @['D10' a]@.
+-- value of type @['D10']@.
 --
 -- >>> d10Nat <$> [d10list||]
 -- []
@@ -887,7 +876,7 @@ d10 = QuasiQuoter
 d10list :: QuasiQuoter
 d10list = QuasiQuoter
     { quoteExp  = strD10ListFail >=> d10ListExp'
-    , quotePat  = strD10ListFail >=> d10ListPat'
+    , quotePat  = d10ListPat
     , quoteType = \_ -> fail "d10list cannot be used in a type context"
     , quoteDec  = \_ -> fail "d10list cannot be used in a declaration context"
     }
@@ -902,7 +891,7 @@ d10list = QuasiQuoter
 -- >>> [d10|6|] + [d10|7|]
 -- [d10|3|]
 
-(+) :: Integral a => D10 a -> D10 a -> D10 a
+(+) :: D10 -> D10 -> D10
 x + y = intMod10 (d10Int x P.+ d10Int y)
 
 -- | Subtraction modulo 10.
@@ -913,7 +902,7 @@ x + y = intMod10 (d10Int x P.+ d10Int y)
 -- >>> [d10|3|] - [d10|7|]
 -- [d10|6|]
 
-(-) :: Integral a => D10 a -> D10 a -> D10 a
+(-) :: D10 -> D10 -> D10
 x - y = intMod10 (d10Int x P.- d10Int y)
 
 -- | Multiplication modulo 10.
@@ -924,5 +913,5 @@ x - y = intMod10 (d10Int x P.- d10Int y)
 -- >>> [d10|7|] * [d10|8|]
 -- [d10|6|]
 
-(*) :: Integral a => D10 a -> D10 a -> D10 a
+(*) :: D10 -> D10 -> D10
 x * y = intMod10 (d10Int x P.* d10Int y)

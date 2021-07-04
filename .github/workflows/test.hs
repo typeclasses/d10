@@ -26,6 +26,9 @@ main =
                         , "hedgehog" .= "1.0.5"
                         , "template-haskell" .= "2.16.*"
                         ]
+            "9.0.1"  -> [ "base" .= "4.15.*"
+                        , "template-haskell" .= "2.17.*"
+                        ]
 
     callProcess "cabal" ("build" : "all" : constraints)
     callProcess "cabal" ("test" : "all" : "--enable-tests" : constraints)

@@ -93,3 +93,7 @@ Other changes:
 
   * `doctest` test dependency has been removed, and
     `hedgehog` dependency has been added instead
+
+**v0.3.0.1**
+
+  * Support GHC 9.0, base 4.15, template-haskell 2.17

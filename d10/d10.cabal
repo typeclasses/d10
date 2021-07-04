@@ -1,7 +1,7 @@
 cabal-version: 2.2
 
 name: d10
-version: 0.3
+version: 0.3.0.1
 category: Data
 synopsis: Digits 0-9
 
@@ -62,6 +62,7 @@ tested-with:
   , GHC == 8.6.1
   , GHC == 8.8.1
   , GHC == 8.10.1
+  , GHC == 9.0.1
 
 extra-source-files:
     README.md
@@ -78,10 +79,10 @@ library
 
   build-depends:
       base ^>= 4.10 || ^>= 4.11 || ^>= 4.12
-        || ^>= 4.13 || ^>= 4.14
+        || ^>= 4.13 || ^>= 4.14 || ^>= 4.15
     , template-haskell
            ^>= 2.12 || ^>= 2.13 || ^>= 2.14
-        || ^>= 2.15 || ^>= 2.16
+        || ^>= 2.15 || ^>= 2.16 || ^>= 2.17
 
   exposed-modules:
       Data.D10.Char
@@ -115,11 +116,11 @@ test-suite char
   build-depends:
       d10
     , base ^>= 4.10 || ^>= 4.11 || ^>= 4.12
-        || ^>= 4.13 || ^>= 4.14
+        || ^>= 4.13 || ^>= 4.14 || ^>= 4.15
     , hedgehog ^>= 1.0
     , template-haskell
            ^>= 2.12 || ^>= 2.13 || ^>= 2.14
-        || ^>= 2.15 || ^>= 2.16
+        || ^>= 2.15 || ^>= 2.16 || ^>= 2.17
 
   default-extensions:
       DeriveDataTypeable
@@ -147,11 +148,11 @@ test-suite num
   build-depends:
       d10
     , base ^>= 4.10 || ^>= 4.11 || ^>= 4.12
-        || ^>= 4.13 || ^>= 4.14
+        || ^>= 4.13 || ^>= 4.14 || ^>= 4.15
     , hedgehog ^>= 1.0
     , template-haskell
            ^>= 2.12 || ^>= 2.13 || ^>= 2.14
-        || ^>= 2.15 || ^>= 2.16
+        || ^>= 2.15 || ^>= 2.16 || ^>= 2.17
 
   default-extensions:
       DeriveDataTypeable
@@ -179,11 +180,11 @@ test-suite safe
   build-depends:
       d10
     , base ^>= 4.10 || ^>= 4.11 || ^>= 4.12
-        || ^>= 4.13 || ^>= 4.14
+        || ^>= 4.13 || ^>= 4.14 || ^>= 4.15
     , hedgehog ^>= 1.0
     , template-haskell
            ^>= 2.12 || ^>= 2.13 || ^>= 2.14
-        || ^>= 2.15 || ^>= 2.16
+        || ^>= 2.15 || ^>= 2.16 || ^>= 2.17
 
   default-extensions:
       DeriveDataTypeable

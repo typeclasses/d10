@@ -107,4 +107,8 @@ Removed the `Data` prefix from module names.
   * `Data.D10.Predicate` is now `D10.Predicate`
   * `Data.D10.Safe` is now `D10.Safe`
 
+Constructors for `D10` are no longer exported by the `D10.Char`
+and `D10.Num` modules. They have moved to the new modules
+`D10.Char.Unsafe` and `D10.Num.Unsafe` respectively.
+
 Required Cabal version required is raised from 2.2 to 3.0

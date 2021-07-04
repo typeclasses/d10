@@ -1,6 +1,15 @@
 -- | Defines a 'D10' type as a newtype for 'Char', where the
 -- values are restricted to characters between @'0'@ and @'9'@.
 --
+-- This module provides many functions for constructing 'D10'
+-- values, including:
+--
+-- * @'integerD10Maybe' :: 'Integer' -> 'Maybe' 'D10'@
+-- * @'integerMod10' :: 'Integer' -> 'D10'@
+--
+-- With the @QuasiQuotes@ GHC extension enabled, you can write
+-- 'D10' literals using the quasi-quoters 'd10' and 'd10list'.
+--
 -- The following modules define @D10@ types in different ways
 -- but are otherwise very similar to this one:
 --
@@ -10,9 +19,10 @@
 module D10.Char
     (
     -- * Type
-      D10 (..)
+      D10
     -- $bounded
     -- $enum
+    -- $show
 
     -- * Quasi-quoters
     , d10
@@ -76,13 +86,14 @@ module D10.Char
 
     ) where
 
+import D10.Char.Unsafe
+
 import D10.Predicate
 
 -- base
 import Control.Monad      ((>=>))
 import Control.Monad.Fail (MonadFail (fail))
 import Data.Char          (chr, ord)
-import Data.Monoid        (Endo (..))
 import Numeric.Natural    (Natural)
 import Prelude            hiding (fail, (+), (-), (*))
 
@@ -91,27 +102,9 @@ import qualified Prelude as P
 -- template-haskell
 import Language.Haskell.TH.Lib    (litP, charL)
 import Language.Haskell.TH.Quote  (QuasiQuoter (..))
-import Language.Haskell.TH.Syntax (Exp (..), Lift, Pat (..), Q)
+import Language.Haskell.TH.Syntax (Exp (..), Pat (..), Q)
 
 ---------------------------------------------------
-
--- | A 'Char' value between @'0'@ and @'9'@.
---
--- The "D10.Char" module provides many functions for
--- constructing 'D10' values, including:
---
--- * @'integerD10Maybe' :: 'Integer' -> 'Maybe' 'D10'@
--- * @'integerMod10' :: 'Integer' -> 'D10'@
---
--- With the @QuasiQuotes@ GHC extension enabled, you can write
--- 'D10' literals using the quasi-quoters 'd10' and 'd10list'.
-
-newtype D10 =
-    D10_Unsafe Char
-      -- ^ The constructor's name include the word "unsafe" as a reminder
-      --   that you should generally avoid using it directly, because it
-      --   allows constructing invalid 'D10' values.
-    deriving (Eq, Ord, Lift)
 
 -- $bounded
 -- ==== Bounded
@@ -122,10 +115,7 @@ newtype D10 =
 -- >>> maxBound :: D10
 -- [d10|9|]
 
-instance Bounded D10
-  where
-    minBound = D10_Unsafe '0'
-    maxBound = D10_Unsafe '9'
+---------------------------------------------------
 
 -- $enum
 -- ==== Enum
@@ -145,46 +135,12 @@ instance Bounded D10
 -- >>> [ minBound .. maxBound ] :: [D10]
 -- [d10list|0123456789|]
 
-instance Enum D10
-  where
-    fromEnum :: D10 -> Int
-    fromEnum = d10Int
-
-    toEnum :: Int -> D10
-    toEnum = either error id . intD10Either
-
-    enumFrom :: D10 -> [D10]
-    enumFrom x = enumFromTo x maxBound
-
-    enumFromThen :: D10 -> D10 -> [D10]
-    enumFromThen x y = enumFromThenTo x y bound
-      where
-        bound | fromEnum y >= fromEnum x = maxBound
-              | otherwise                = minBound
-
-    succ :: D10 -> D10
-    succ (D10_Unsafe '9') = error "D10 overflow"
-    succ (D10_Unsafe x) = D10_Unsafe (succ x)
-
-    pred :: D10 -> D10
-    pred (D10_Unsafe '0') = error "D10 underflow"
-    pred (D10_Unsafe x) = D10_Unsafe (pred x)
-
 ---------------------------------------------------
 
--- | Shows base-10 digits using the quasiquoters defined in
--- "D10.Char". A single digit is displayed using 'd10'.
+-- $show
+-- 'show' shows base-10 digits using the quasiquoters defined
+-- in this module. A single digit is displayed using 'd10'.
 -- A list of digits is displayed using 'd10list'.
-
-instance Show D10 where
-    showsPrec _ x = showString "[d10|"     . showsChar x . showString "|]"
-    showList xs   = showString "[d10list|" . showsStr xs . showString "|]"
-
-showsChar :: D10 -> ShowS
-showsChar (D10_Unsafe x) = showChar x
-
-showsStr :: [D10] -> ShowS
-showsStr = appEndo . foldMap (Endo . showsChar)
 
 ---------------------------------------------------
 

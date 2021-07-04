@@ -2,6 +2,20 @@
 -- instance of the 'Num' class, where the values are restricted
 -- to numbers between @'fromInteger' 0@ and @'fromInteger' 9@.
 --
+-- This module provides many functions for constructing 'D10'
+-- values, including:
+--
+-- * @'integerD10Maybe' :: 'Num' a => 'Integer' -> 'Maybe' ('D10' a)@
+-- * @'integerMod10' :: 'Num' a => 'Integer' -> 'D10' a@
+--
+-- There are also several ways to safely write 'D10' literals
+-- using Template Haskell:
+--
+-- * With the @QuasiQuotes@ GHC extension enabled, you can write
+--   use the quasi-quoters 'd10' and 'd10list'.
+-- * With the @TemplateHaskell@ GHC extension enabled, you can
+--   splice expressions produced by 'd10Exp' and 'd10ListExp'.
+--
 -- The following modules define @D10@ types in different ways
 -- but are otherwise very similar to this one:
 --
@@ -11,9 +25,10 @@
 module D10.Num
     (
     -- * Type
-      D10 (..)
+      D10
     -- $bounded
     -- $enum
+    -- $show
 
     -- * Quasi-quoters
     , d10
@@ -77,13 +92,14 @@ module D10.Num
 
     ) where
 
+import D10.Num.Unsafe
+
 import D10.Predicate
 
 -- base
 import Control.Monad      ((>=>))
 import Control.Monad.Fail (MonadFail (fail))
 import Data.Char          (chr, ord)
-import Data.Monoid        (Endo (..))
 import Numeric.Natural    (Natural)
 import Prelude            hiding (fail, (+), (-), (*))
 
@@ -92,33 +108,9 @@ import qualified Prelude as P
 -- template-haskell
 import Language.Haskell.TH.Lib    (litP, integerL)
 import Language.Haskell.TH.Quote  (QuasiQuoter (..))
-import Language.Haskell.TH.Syntax (Exp (..), Lift, Pat (..), Q)
+import Language.Haskell.TH.Syntax (Exp (..), Pat (..), Q)
 
 ---------------------------------------------------
-
--- | A value of some numeric type @a@ between
--- @'fromInteger' 0@ and @'fromInteger' 9@.
---
--- The "D10.Num" module provides many functions for
--- constructing 'D10' values, including:
---
--- * @'integerD10Maybe' :: 'Integer' -> 'Maybe' 'D10'@
--- * @'integerMod10' :: 'Integer' -> 'D10'@
---
--- There are also several ways to safely write 'D10' literals
--- using Template Haskell:
---
--- * With the @QuasiQuotes@ GHC extension enabled, you can write
---   use the quasi-quoters 'd10' and 'd10list'.
--- * With the @TemplateHaskell@ GHC extension enabled, you can
---   splice expressions produced by 'd10Exp' and 'd10ListExp'.
-
-newtype D10 a =
-    D10_Unsafe a
-      -- ^ The constructor's name include the word "unsafe" as a reminder
-      --   that you should generally avoid using it directly, because it
-      --   allows constructing invalid 'D10' values.
-    deriving (Eq, Ord, Lift)
 
 -- $bounded
 -- ==== Bounded
@@ -129,10 +121,7 @@ newtype D10 a =
 -- >>> maxBound :: D10 Integer
 -- [d10|9|]
 
-instance Num a => Bounded (D10 a)
-  where
-    minBound = D10_Unsafe 0
-    maxBound = D10_Unsafe 9
+---------------------------------------------------
 
 -- $enum
 -- ==== Enum
@@ -152,44 +141,12 @@ instance Num a => Bounded (D10 a)
 -- >>> [ minBound .. maxBound ] :: [D10 Integer]
 -- [d10list|0123456789|]
 
-instance Integral a => Enum (D10 a)
-  where
-    fromEnum :: D10 a -> Int
-    fromEnum = d10Int
-
-    toEnum :: Int -> D10 a
-    toEnum = either error id . intD10Either
-
-    enumFrom :: D10 a -> [D10 a]
-    enumFrom x = enumFromTo x maxBound
-
-    enumFromThen :: D10 a -> D10 a -> [D10 a]
-    enumFromThen x y = enumFromThenTo x y bound
-      where
-        bound | fromEnum y >= fromEnum x = maxBound
-              | otherwise                = minBound
-
-    succ (D10_Unsafe 9) = error "D10 overflow"
-    succ (D10_Unsafe x) = D10_Unsafe (succ x)
-
-    pred (D10_Unsafe 0) = error "D10 underflow"
-    pred (D10_Unsafe x) = D10_Unsafe (pred x)
-
 ---------------------------------------------------
 
--- | Shows base-10 digits using the quasiquoters defined in
--- "D10.Char". A single digit is displayed using 'd10'.
+-- $show
+-- 'show' shows base-10 digits using the quasiquoters defined
+-- in this module. A single digit is displayed using 'd10'.
 -- A list of digits is displayed using 'd10list'.
-
-instance Integral a => Show (D10 a) where
-    showsPrec _ x = showString "[d10|"     . showsChar x . showString "|]"
-    showList xs   = showString "[d10list|" . showsStr xs . showString "|]"
-
-showsChar :: Integral a => D10 a -> ShowS
-showsChar = showChar . d10Char
-
-showsStr :: Integral a => [D10 a] -> ShowS
-showsStr = appEndo . foldMap (Endo . showsChar)
 
 ---------------------------------------------------
 

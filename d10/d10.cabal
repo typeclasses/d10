@@ -96,8 +96,10 @@ library
     import: language
     import: library-dependencies
     hs-source-dirs: src
-    exposed-modules: D10.Char, D10.Num
-                   , D10.Predicate, D10.Safe
+    exposed-modules:
+        D10.Char, D10.Char.Unsafe
+      , D10.Num, D10.Num.Unsafe
+      , D10.Predicate, D10.Safe
 
 test-suite char
     import: test

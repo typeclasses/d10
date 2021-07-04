@@ -1,3 +1,5 @@
+{-# language Trustworthy, TemplateHaskell #-}
+
 -- | Defines a 'D10' type as a newtype for any type with an
 -- instance of the 'Num' class, where the values are restricted
 -- to numbers between @'fromInteger' 0@ and @'fromInteger' 9@.

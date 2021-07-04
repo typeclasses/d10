@@ -1,3 +1,5 @@
+{-# language Unsafe, GeneralizedNewtypeDeriving #-}
+
 module D10.Num.Unsafe (D10 (..)) where
 
 import qualified D10.Predicate as Predicate

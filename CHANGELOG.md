@@ -111,4 +111,7 @@ Constructors for `D10` are no longer exported by the `D10.Char`
 and `D10.Num` modules. They have moved to the new modules
 `D10.Char.Unsafe` and `D10.Num.Unsafe` respectively.
 
+Added *Safe Haskell* language flags (`Safe`, `Trustworthy`, `Unsafe`)
+to indicate which modules permit constructing invalid values
+
 Required Cabal version required is raised from 2.2 to 3.0

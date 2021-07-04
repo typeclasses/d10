@@ -76,9 +76,8 @@ common language
     ghc-options: -Wall
     default-extensions:
         DeriveDataTypeable DeriveGeneric DeriveLift
-        DerivingStrategies GeneralizedNewtypeDeriving
-        InstanceSigs QuasiQuotes ScopedTypeVariables
-        TemplateHaskell TypeApplications
+        DerivingStrategies InstanceSigs QuasiQuotes
+        ScopedTypeVariables TypeApplications
 
 common library-dependencies
     build-depends:
@@ -94,6 +93,8 @@ common test
     hs-source-dirs: test
     other-modules: AssertQFails Fallible
     build-depends: d10, hedgehog ^>= 1.0
+    default-extensions: GeneralizedNewtypeDeriving
+                        TemplateHaskell
 
 library
     import: language

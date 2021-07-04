@@ -98,7 +98,7 @@ Other changes:
 
   * Support GHC 9.0, base 4.15, template-haskell 2.17
 
-**1**
+**v1**
 
 Removed the `Data` prefix from module names.
 

@@ -7,13 +7,13 @@ synopsis: Digits 0-9
 
 description:
     Data types representing the digits zero through nine.
-    .
+
     == Modules
-    .
+
     Each of the following modules defines a different type named
     @D10@, all of which are different representations of the same
     concept:
-    .
+
     * "D10.Char" - Defines a @D10@ type as a newtype for @Char@,
       where the values are restricted to characters between @'0'@ and
       @'9'@.
@@ -23,14 +23,14 @@ description:
       @fromInteger 9@.
     * "D10.Safe" - Defines a @D10@ type as
       @D0 | D1 | D2 | ... | D9@.
-    .
+
     Other modules:
-    .
+
     * "D10.Predicate" - Functions to test whether values of
       various types represent digits in the range /0/ to /9/.
-    .
+
     == Quasi-quoters
-    .
+
     Each module that defines a @D10@ type also defines quasi-quoters
     for it. With the @QuasiQuotes@ GHC extension enabled, a single
     digit like /7/ can be written as @[d10|7|]@, and a list of digits

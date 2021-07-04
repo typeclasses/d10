@@ -80,11 +80,11 @@ module D10.Safe
 
     ) where
 
+import D10.Safe.Type (D10 (..))
+
 -- base
 import Control.Monad      ((>=>))
 import Control.Monad.Fail (MonadFail (fail))
-import Data.Data          (Data)
-import GHC.Generics       (Generic)
 import Numeric.Natural    (Natural)
 import Prelude            hiding (fail, (+), (-), (*))
 
@@ -92,24 +92,9 @@ import qualified Prelude as P
 
 -- template-haskell
 import Language.Haskell.TH.Quote  (QuasiQuoter (..))
-import Language.Haskell.TH.Syntax (Exp (..), Lift, Pat (..), Q, dataToPatQ)
+import Language.Haskell.TH.Syntax (Exp (..), Pat (..), Q, dataToPatQ)
 
 ---------------------------------------------------
-
--- | A whole number between /0/ and /9/.
-
-data D10
-    = D0  -- ^ Zero
-    | D1  -- ^ One
-    | D2  -- ^ Two
-    | D3  -- ^ Three
-    | D4  -- ^ Four
-    | D5  -- ^ Five
-    | D6  -- ^ Six
-    | D7  -- ^ Seven
-    | D8  -- ^ Eight
-    | D9  -- ^ Nine
-    deriving (Bounded, Enum, Eq, Lift, Ord, Show, Data, Generic)
 
 -- $bounded
 -- ==== Bounded

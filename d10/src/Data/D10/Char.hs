@@ -93,11 +93,6 @@ import Language.Haskell.TH.Lib    (litP, charL)
 import Language.Haskell.TH.Quote  (QuasiQuoter (..))
 import Language.Haskell.TH.Syntax (Exp (..), Lift, Pat (..), Q)
 
--- $setup
--- >>> :set -XQuasiQuotes
--- >>> :set -XTemplateHaskell
--- >>> :set -fno-warn-overlapping-patterns
-
 ---------------------------------------------------
 
 -- | A 'Char' value between @'0'@ and @'9'@.

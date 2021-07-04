@@ -92,11 +92,6 @@ import qualified Prelude as P
 import Language.Haskell.TH.Quote  (QuasiQuoter (..))
 import Language.Haskell.TH.Syntax (Exp (..), Lift, Pat (..), Q, dataToPatQ)
 
--- $setup
--- >>> :set -XQuasiQuotes
--- >>> :set -XTemplateHaskell
--- >>> :set -fno-warn-overlapping-patterns
-
 ---------------------------------------------------
 
 -- | A whole number between /0/ and /9/.
@@ -775,10 +770,10 @@ d10Pat = dataToPatQ (const Nothing)
 -- to match a particular list of 'D10' values.
 --
 -- >>> :{
---       case (strD10ListMaybe "56") of
---         Just $(d10ListPat "42") -> "A"
---         Just $(d10ListPat "56") -> "B"
---         _                       -> "C"
+--       case [D5, D6] of
+--         $(d10ListPat "42") -> "A"
+--         $(d10ListPat "56") -> "B"
+--         _                  -> "C"
 -- >>> :}
 -- "B"
 --
@@ -821,7 +816,7 @@ d10ListPat' xs =
 -- This quasi-quoter can also be used as a pattern.
 --
 -- >>> :{
---       case [d10list|56|] of
+--       case [D5, D6] of
 --         [d10list|41|] -> "A"
 --         [d10list|56|] -> "B"
 --         _             -> "C"
@@ -829,7 +824,7 @@ d10ListPat' xs =
 -- "B"
 --
 -- >>> :{
---       case [d10list|56|] of
+--       case [D5, D6] of
 --         [d10list|4x|] -> "A"
 --         [d10list|56|] -> "B"
 --         _             -> "C"

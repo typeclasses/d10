@@ -8,15 +8,15 @@ import qualified Hedgehog.Gen as Gen
 import qualified Hedgehog.Range as Range
 
 import Control.Applicative ((<|>))
-import Control.Exception (try, SomeException)
 import Control.Monad (when)
 import Control.Monad.Fail (MonadFail (fail))
-import Control.Monad.IO.Class (liftIO)
 import Data.Int (Int32)
 import Data.Maybe (isJust)
 import Data.Word (Word64)
-import Language.Haskell.TH (runQ, Q)
 import System.Exit (exitFailure)
+
+import AssertQFails (qFails)
+import Fallible (Fallible)
 
 main :: IO ()
 main =
@@ -168,12 +168,6 @@ prop_integralD10ListEither_examples = withTests 1 $ property $ do
     integralD10Either  (12  :: Integer) === (Left "d10 must be between 0 and 9" :: Either String (D10 Integer))
     integralD10Either ((-5) :: Integer) === (Left "d10 must be between 0 and 9" :: Either String (D10 Integer))
 
-newtype Fallible a = Fallible (Either String a)
-    deriving newtype (Functor, Applicative, Monad, Eq, Show)
-
-instance MonadFail Fallible where
-    fail = Fallible . Left
-
 prop_charD10Fail_examples :: Property
 prop_charD10Fail_examples = withTests 1 $ property $ do
     (charD10Fail '5' :: Fallible (D10 Int)) === return [d10|5|]
@@ -213,14 +207,6 @@ prop_integralD10Fail_examples = withTests 1 $ property $ do
     (integralD10Fail   (5  :: Integer) :: Fallible (D10 Int)) === return [d10|5|]
     (integralD10Fail  (12  :: Integer) :: Fallible (D10 Int)) === fail "d10 must be between 0 and 9"
     (integralD10Fail ((-5) :: Integer) :: Fallible (D10 Int)) === fail "d10 must be between 0 and 9"
-
-qFails :: Show a => Q a -> PropertyT IO ()
-qFails (q :: Q a) =
-  do
-    result <- liftIO (try (runQ q) :: IO (Either SomeException a))
-    case result of
-        Left _ -> success
-        Right _ -> failure
 
 prop_spliceExp_examples :: Property
 prop_spliceExp_examples = withTests 1 $ property $ do

@@ -108,6 +108,10 @@ test-suite char
   type: exitcode-stdio-1.0
   main-is: char.hs
 
+  other-modules:
+      AssertQFails
+      Fallible
+
   build-depends:
       d10
     , base ^>= 4.10 || ^>= 4.11 || ^>= 4.12
@@ -135,6 +139,42 @@ test-suite num
   hs-source-dirs: test
   type: exitcode-stdio-1.0
   main-is: num.hs
+
+  other-modules:
+      AssertQFails
+      Fallible
+
+  build-depends:
+      d10
+    , base ^>= 4.10 || ^>= 4.11 || ^>= 4.12
+        || ^>= 4.13 || ^>= 4.14
+    , hedgehog ^>= 1.0
+    , template-haskell
+           ^>= 2.12 || ^>= 2.13 || ^>= 2.14
+        || ^>= 2.15 || ^>= 2.16
+
+  default-extensions:
+      DeriveDataTypeable
+      DeriveGeneric
+      DeriveLift
+      DerivingStrategies
+      GeneralizedNewtypeDeriving
+      InstanceSigs
+      QuasiQuotes
+      ScopedTypeVariables
+      TemplateHaskell
+      TypeApplications
+
+test-suite safe
+  default-language: Haskell2010
+  ghc-options: -Wall
+  hs-source-dirs: test
+  type: exitcode-stdio-1.0
+  main-is: safe.hs
+
+  other-modules:
+      AssertQFails
+      Fallible
 
   build-depends:
       d10

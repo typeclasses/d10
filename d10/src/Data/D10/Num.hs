@@ -94,11 +94,6 @@ import Language.Haskell.TH.Lib    (litP, integerL)
 import Language.Haskell.TH.Quote  (QuasiQuoter (..))
 import Language.Haskell.TH.Syntax (Exp (..), Lift, Pat (..), Q)
 
--- $setup
--- >>> :set -XQuasiQuotes
--- >>> :set -XTemplateHaskell
--- >>> :set -fno-warn-overlapping-patterns
-
 ---------------------------------------------------
 
 -- | A value of some numeric type @a@ between

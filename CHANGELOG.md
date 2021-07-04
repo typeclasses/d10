@@ -88,3 +88,8 @@ In module `Data.D10.Safe`:
     from `[D10] -> Q Pat`
     to `String -> Q Pat`
   * Removed `d10Exp`, `d10Pat`, and `d10`
+
+Other changes:
+
+  * `doctest` test dependency has been removed, and
+    `hedgehog` dependency has been added instead

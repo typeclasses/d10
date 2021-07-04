@@ -1,7 +1,7 @@
 cabal-version: 2.2
 
 name: d10
-version: 0.3.0.1
+version: 1
 category: Data
 synopsis: Digits 0-9
 

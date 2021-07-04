@@ -90,7 +90,7 @@ import qualified Prelude as P
 
 -- template-haskell
 import Language.Haskell.TH.Quote  (QuasiQuoter (..))
-import Language.Haskell.TH.Syntax (Exp (..), Lift (lift), Pat (..), Q, dataToPatQ)
+import Language.Haskell.TH.Syntax (Exp (..), Lift, Pat (..), Q, dataToPatQ)
 
 -- $setup
 -- >>> :set -XQuasiQuotes
@@ -761,7 +761,10 @@ integralD10Fail x =
 -- does something similar.
 
 d10ListExp :: String -> Q Exp
-d10ListExp = strD10ListFail >=> (lift :: [D10] -> Q Exp)
+d10ListExp = strD10ListFail >=> d10ListExp'
+
+d10ListExp' :: [D10] -> Q Exp
+d10ListExp' x = [| x |]
 
 ---------------------------------------------------
 
@@ -837,7 +840,7 @@ d10ListPat' xs =
 
 d10list :: QuasiQuoter
 d10list = QuasiQuoter
-    { quoteExp  = strD10ListFail >=> lift
+    { quoteExp  = strD10ListFail >=> d10ListExp'
     , quotePat  = strD10ListFail >=> d10ListPat'
     , quoteType = \_ -> fail "d10list cannot be used in a type context"
     , quoteDec  = \_ -> fail "d10list cannot be used in a declaration context"

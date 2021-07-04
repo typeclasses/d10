@@ -1,4 +1,4 @@
-cabal-version: 2.2
+cabal-version: 3.0
 
 name: d10
 version: 1
@@ -57,143 +57,59 @@ license-file: license.txt
 build-type: Simple
 
 tested-with:
-    GHC == 8.2.2
-  , GHC == 8.4.3
-  , GHC == 8.6.1
-  , GHC == 8.8.1
-  , GHC == 8.10.1
-  , GHC == 9.0.1
+    GHC == 8.2.2, GHC == 8.4.3, GHC == 8.6.1
+  , GHC == 8.8.1, GHC == 8.10.1, GHC == 9.0.1
 
 extra-source-files:
     README.md
     CHANGELOG.md
 
 source-repository head
-  type: git
-  location: https://github.com/typeclasses/d10
+    type: git
+    location: https://github.com/typeclasses/d10
+
+common language
+    default-language: Haskell2010
+    ghc-options: -Wall
+    default-extensions:
+        DeriveDataTypeable DeriveGeneric DeriveLift
+        DerivingStrategies GeneralizedNewtypeDeriving
+        InstanceSigs QuasiQuotes ScopedTypeVariables
+        TemplateHaskell TypeApplications
+
+common library-dependencies
+    build-depends:
+        base ^>= 4.10 || ^>= 4.11 || ^>= 4.12
+          || ^>= 4.13 || ^>= 4.14 || ^>= 4.15
+      , template-haskell
+             ^>= 2.12 || ^>= 2.13 || ^>= 2.14
+          || ^>= 2.15 || ^>= 2.16 || ^>= 2.17
+
+common test
+    import: language
+    import: library-dependencies
+    hs-source-dirs: test
+    other-modules: AssertQFails Fallible
+    build-depends: d10, hedgehog ^>= 1.0
 
 library
-  default-language: Haskell2010
-  ghc-options: -Wall
-  hs-source-dirs: src
-
-  build-depends:
-      base ^>= 4.10 || ^>= 4.11 || ^>= 4.12
-        || ^>= 4.13 || ^>= 4.14 || ^>= 4.15
-    , template-haskell
-           ^>= 2.12 || ^>= 2.13 || ^>= 2.14
-        || ^>= 2.15 || ^>= 2.16 || ^>= 2.17
-
-  exposed-modules:
-      D10.Char
-    , D10.Num
-    , D10.Predicate
-    , D10.Safe
-
-  default-extensions:
-      DeriveDataTypeable
-      DeriveGeneric
-      DeriveLift
-      DerivingStrategies
-      GeneralizedNewtypeDeriving
-      InstanceSigs
-      QuasiQuotes
-      ScopedTypeVariables
-      TemplateHaskell
-      TypeApplications
+    import: language
+    import: library-dependencies
+    hs-source-dirs: src
+    exposed-modules: D10.Char, D10.Num
+                   , D10.Predicate, D10.Safe
 
 test-suite char
-  default-language: Haskell2010
-  ghc-options: -Wall
-  hs-source-dirs: test
-  type: exitcode-stdio-1.0
-  main-is: char.hs
-
-  other-modules:
-      AssertQFails
-      Fallible
-
-  build-depends:
-      d10
-    , base ^>= 4.10 || ^>= 4.11 || ^>= 4.12
-        || ^>= 4.13 || ^>= 4.14 || ^>= 4.15
-    , hedgehog ^>= 1.0
-    , template-haskell
-           ^>= 2.12 || ^>= 2.13 || ^>= 2.14
-        || ^>= 2.15 || ^>= 2.16 || ^>= 2.17
-
-  default-extensions:
-      DeriveDataTypeable
-      DeriveGeneric
-      DeriveLift
-      DerivingStrategies
-      GeneralizedNewtypeDeriving
-      InstanceSigs
-      QuasiQuotes
-      ScopedTypeVariables
-      TemplateHaskell
-      TypeApplications
+    import: test
+    type: exitcode-stdio-1.0
+    main-is: char.hs
 
 test-suite num
-  default-language: Haskell2010
-  ghc-options: -Wall
-  hs-source-dirs: test
-  type: exitcode-stdio-1.0
-  main-is: num.hs
-
-  other-modules:
-      AssertQFails
-      Fallible
-
-  build-depends:
-      d10
-    , base ^>= 4.10 || ^>= 4.11 || ^>= 4.12
-        || ^>= 4.13 || ^>= 4.14 || ^>= 4.15
-    , hedgehog ^>= 1.0
-    , template-haskell
-           ^>= 2.12 || ^>= 2.13 || ^>= 2.14
-        || ^>= 2.15 || ^>= 2.16 || ^>= 2.17
-
-  default-extensions:
-      DeriveDataTypeable
-      DeriveGeneric
-      DeriveLift
-      DerivingStrategies
-      GeneralizedNewtypeDeriving
-      InstanceSigs
-      QuasiQuotes
-      ScopedTypeVariables
-      TemplateHaskell
-      TypeApplications
+    import: test
+    type: exitcode-stdio-1.0
+    main-is: num.hs
 
 test-suite safe
-  default-language: Haskell2010
-  ghc-options: -Wall
-  hs-source-dirs: test
-  type: exitcode-stdio-1.0
-  main-is: safe.hs
-
-  other-modules:
-      AssertQFails
-      Fallible
-
-  build-depends:
-      d10
-    , base ^>= 4.10 || ^>= 4.11 || ^>= 4.12
-        || ^>= 4.13 || ^>= 4.14 || ^>= 4.15
-    , hedgehog ^>= 1.0
-    , template-haskell
-           ^>= 2.12 || ^>= 2.13 || ^>= 2.14
-        || ^>= 2.15 || ^>= 2.16 || ^>= 2.17
-
-  default-extensions:
-      DeriveDataTypeable
-      DeriveGeneric
-      DeriveLift
-      DerivingStrategies
-      GeneralizedNewtypeDeriving
-      InstanceSigs
-      QuasiQuotes
-      ScopedTypeVariables
-      TemplateHaskell
-      TypeApplications
+    import: test
+    type: exitcode-stdio-1.0
+    main-is: safe.hs

@@ -106,3 +106,5 @@ Removed the `Data` prefix from module names.
   * `Data.D10.Num` is now `D10.Num`
   * `Data.D10.Predicate` is now `D10.Predicate`
   * `Data.D10.Safe` is now `D10.Safe`
+
+Required Cabal version required is raised from 2.2 to 3.0

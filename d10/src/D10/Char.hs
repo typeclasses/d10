@@ -26,38 +26,42 @@ module D10.Char
     (
     -- * Type
       D10
+
+    -- ** Bounded
     -- $bounded
+
+    -- ** Enum
     -- $enum
+
+    -- ** Show
     -- $show
 
     -- * Quasi-quoters
-    , d10
-    , d10list
+    , d10, d10list
 
-    -- * Splice expressions
-    , d10Exp
-    , d10ListExp
+    -- * Splices
+    -- ** Expressions
+    , d10Exp, d10ListExp
+    -- ** Patterns
+    , d10Pat, d10ListPat
 
-    -- * Splice patterns
-    , d10Pat
-    , d10ListPat
-
-    -- * Converting between D10 and Char
+    -- * Conversions
+    -- ** D10 / Char
     , d10Char, charD10Maybe, charD10Either, charD10Fail
-    -- * Converting between D10 and String
+    -- ** D10 / String
     , d10Str, strD10Maybe, strD10Either, strD10Fail
-    -- * Converting between [D10] and String
+    -- ** [D10] / String
     , strD10ListMaybe, strD10ListEither, strD10ListFail
-    -- * Converting between D10 and Natural
+    -- ** D10 / Natural
     , d10Nat, natD10Maybe, natD10Either, natD10Fail
     , natMod10
-    -- * Converting between D10 and Integer
+    -- ** D10 / Integer
     , d10Integer, integerD10Maybe, integerD10Either
     , integerD10Fail, integerMod10
-    -- * Converting between D10 and Int
+    -- ** D10 / Int
     , d10Int, intD10Maybe, intD10Either
     , intD10Fail, intMod10
-    -- * Converting between D10 and general numeric types
+    -- ** D10 / general numeric types
     , d10Num, integralD10Maybe, integralD10Either
     , integralD10Fail, integralMod10
 
@@ -76,43 +80,42 @@ import Language.Haskell.TH.Lib    (litP, charL)
 import Language.Haskell.TH.Quote  (QuasiQuoter (..))
 import Language.Haskell.TH.Syntax (Exp (..), Pat (..), Q)
 
----------------------------------------------------
+{- $bounded
 
--- $bounded
--- ==== Bounded
---
--- >>> minBound :: D10
--- [d10|0|]
---
--- >>> maxBound :: D10
--- [d10|9|]
+>>> minBound :: D10
+[d10|0|]
 
----------------------------------------------------
+>>> maxBound :: D10
+[d10|9|]
 
--- $enum
--- ==== Enum
---
--- >>> [ [d10|5|] .. ]
--- [d10list|56789|]
---
--- >>> [ [d10|4|] .. [d10|7|] ]
--- [d10list|4567|]
---
--- >>> [ [d10|5|], [d10|4|] .. ]
--- [d10list|543210|]
---
--- >>> [ [d10|1|], [d10|3|] .. ]
--- [d10list|13579|]
---
--- >>> [ minBound .. maxBound ] :: [D10]
--- [d10list|0123456789|]
+-}
 
----------------------------------------------------
+{- $enum
 
--- $show
--- 'show' shows base-10 digits using the quasiquoters defined
--- in this module. A single digit is displayed using 'd10'.
--- A list of digits is displayed using 'd10list'.
+>>> [ [d10|5|] .. ]
+[d10list|56789|]
+
+>>> [ [d10|4|] .. [d10|7|] ]
+[d10list|4567|]
+
+>>> [ [d10|5|], [d10|4|] .. ]
+[d10list|543210|]
+
+>>> [ [d10|1|], [d10|3|] .. ]
+[d10list|13579|]
+
+>>> [ minBound .. maxBound ] :: [D10]
+[d10list|0123456789|]
+
+-}
+
+{- $show
+
+'show' shows base-10 digits using the quasiquoters defined
+in this module. A single digit is displayed using 'd10'.
+A list of digits is displayed using 'd10list'.
+
+-}
 
 ---------------------------------------------------
 

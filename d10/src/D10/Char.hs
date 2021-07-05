@@ -1,22 +1,26 @@
 {-# language Trustworthy, TemplateHaskell #-}
 
--- | Defines a 'D10' type as a newtype for 'Char', where the
--- values are restricted to characters between @'0'@ and @'9'@.
---
--- This module provides many functions for constructing 'D10'
--- values, including:
---
--- * @'integerD10Maybe' :: 'Integer' -> 'Maybe' 'D10'@
--- * @'integerMod10' :: 'Integer' -> 'D10'@
---
--- With the @QuasiQuotes@ GHC extension enabled, you can write
--- 'D10' literals using the quasi-quoters 'd10' and 'd10list'.
---
--- The following modules define @D10@ types in different ways
--- but are otherwise very similar to this one:
---
--- * "D10.Num"
--- * "D10.Safe"
+{- |
+
+Defines a 'D10' type as a newtype for 'Char', where the
+values are restricted to characters between @'0'@ and @'9'@.
+
+This module provides many functions for constructing 'D10'
+values, including:
+
+  * @'integerD10Maybe' :: 'Integer' -> 'Maybe' 'D10'@
+  * @'integerMod10' :: 'Integer' -> 'D10'@
+
+With the @QuasiQuotes@ GHC extension enabled, you can write
+'D10' literals using the quasi-quoters 'd10' and 'd10list'.
+
+The following modules define @D10@ types in different ways
+but are otherwise very similar to this one:
+
+  * "D10.Num"
+  * "D10.Safe"
+
+-}
 
 module D10.Char
     (

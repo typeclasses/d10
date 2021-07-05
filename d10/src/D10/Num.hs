@@ -1,28 +1,32 @@
 {-# language Trustworthy, TemplateHaskell #-}
 
--- | Defines a 'D10' type as a newtype for any type with an
--- instance of the 'Num' class, where the values are restricted
--- to numbers between @'fromInteger' 0@ and @'fromInteger' 9@.
---
--- This module provides many functions for constructing 'D10'
--- values, including:
---
--- * @'integerD10Maybe' :: 'Num' a => 'Integer' -> 'Maybe' ('D10' a)@
--- * @'integerMod10' :: 'Num' a => 'Integer' -> 'D10' a@
---
--- There are also several ways to safely write 'D10' literals
--- using Template Haskell:
---
--- * With the @QuasiQuotes@ GHC extension enabled, you can write
---   use the quasi-quoters 'd10' and 'd10list'.
--- * With the @TemplateHaskell@ GHC extension enabled, you can
---   splice expressions produced by 'd10Exp' and 'd10ListExp'.
---
--- The following modules define @D10@ types in different ways
--- but are otherwise very similar to this one:
---
--- * "D10.Char"
--- * "D10.Safe"
+{- |
+
+Defines a 'D10' type as a newtype for any type with an
+instance of the 'Num' class, where the values are restricted
+to numbers between @'fromInteger' 0@ and @'fromInteger' 9@.
+
+This module provides many functions for constructing 'D10'
+values, including:
+
+  * @'integerD10Maybe' :: 'Num' a => 'Integer' -> 'Maybe' ('D10' a)@
+  * @'integerMod10' :: 'Num' a => 'Integer' -> 'D10' a@
+
+There are also several ways to safely write 'D10' literals
+using Template Haskell:
+
+  * With the @QuasiQuotes@ GHC extension enabled, you can write
+    use the quasi-quoters 'd10' and 'd10list'.
+  * With the @TemplateHaskell@ GHC extension enabled, you can
+    splice expressions produced by 'd10Exp' and 'd10ListExp'.
+
+The following modules define @D10@ types in different ways
+but are otherwise very similar to this one:
+
+  * "D10.Char"
+  * "D10.Safe"
+
+-}
 
 module D10.Num
     (

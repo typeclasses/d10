@@ -122,6 +122,7 @@ These new modules are:
 Other new modules:
 
   * `D10.Char.Conversions`
+  * `D10.Num.Conversions`
   * `D10.Safe.Conversions`
   * `D10.Safe.Quotes`
   * `D10.Safe.Splices`

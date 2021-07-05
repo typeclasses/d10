@@ -107,9 +107,17 @@ Removed the `Data` prefix from module names.
   * `Data.D10.Predicate` is now `D10.Predicate`
   * `Data.D10.Safe` is now `D10.Safe`
 
-Constructors for `D10` are no longer exported by the `D10.Char`
-and `D10.Num` modules. They have moved to the new modules
-`D10.Char.Unsafe` and `D10.Num.Unsafe` respectively.
+Constructors for `D10` are no longer exported by the modules formerly
+known as `Data.D10.Char` and `Data.D10.Num`. They have moved to the
+new modules `D10.Char.Unsafe` and `D10.Num.Unsafe` respectively.
+
+Operators `(+)`, `(-)`, and `(*)` have been moved into their own
+separate modules, as the names conflict with `Prelude` functions.
+These new modules are:
+
+  * `D10.Char.Arithmetic`
+  * `D10.Num.Arithmetic`
+  * `D10.Safe.Arithmetic`
 
 Other new modules:
 

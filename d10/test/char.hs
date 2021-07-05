@@ -1,6 +1,7 @@
 import Prelude hiding (fail, (+), (-), (*))
 
 import D10.Char
+import D10.Char.Arithmetic
 import qualified D10.Predicate as Predicate
 
 import Hedgehog

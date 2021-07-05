@@ -83,14 +83,10 @@ module D10.Char
     , integralD10Fail
     , integralMod10
 
-    -- * Modular arithmetic
-    , (+), (-), (*)
-
     ) where
 
-import D10.Char.Unsafe
-
-import D10.Predicate
+import D10.Char.Unsafe (D10(..))
+import D10.Predicate (isD10Char, isD10Int, isD10Integer, isD10Nat)
 
 -- base
 import Control.Monad      ((>=>))
@@ -838,38 +834,3 @@ d10list = QuasiQuoter
     , quoteType = \_ -> fail "d10list cannot be used in a type context"
     , quoteDec  = \_ -> fail "d10list cannot be used in a declaration context"
     }
-
----------------------------------------------------
-
--- | Addition modulo 10.
---
--- >>> [d10|2|] + [d10|3|]
--- [d10|5|]
---
--- >>> [d10|6|] + [d10|7|]
--- [d10|3|]
-
-(+) :: D10 -> D10 -> D10
-x + y = intMod10 (d10Int x P.+ d10Int y)
-
--- | Subtraction modulo 10.
---
--- >>> [d10|7|] - [d10|5|]
--- [d10|2|]
---
--- >>> [d10|3|] - [d10|7|]
--- [d10|6|]
-
-(-) :: D10 -> D10 -> D10
-x - y = intMod10 (d10Int x P.- d10Int y)
-
--- | Multiplication modulo 10.
---
--- >>> [d10|2|] * [d10|4|]
--- [d10|8|]
---
--- >>> [d10|7|] * [d10|8|]
--- [d10|6|]
-
-(*) :: D10 -> D10 -> D10
-x * y = intMod10 (d10Int x P.* d10Int y)

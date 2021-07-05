@@ -105,6 +105,7 @@ library
     exposed-modules:
         D10.Char
           , D10.Char.Arithmetic
+          , D10.Char.Conversions
           , D10.Char.Unsafe
       , D10.Num
           , D10.Num.Arithmetic

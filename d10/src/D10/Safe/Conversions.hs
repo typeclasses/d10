@@ -1,6 +1,24 @@
 {-# language Safe #-}
 
-module D10.Safe.Conversions where
+module D10.Safe.Conversions
+    (
+    -- * Converting between D10 and Char
+      d10Char, charD10Maybe, charD10Either, charD10Fail
+    -- * Converting between D10 and String
+    , d10Str, strD10Maybe, strD10Either, strD10Fail
+    -- * Converting between [D10] and String
+    , strD10ListMaybe, strD10ListEither, strD10ListFail
+    -- * Converting between D10 and Natural
+    , d10Nat, natD10Maybe, natD10Either, natD10Fail, natMod10
+    -- * Converting between D10 and Integer
+    , d10Integer, integerD10Maybe, integerD10Either
+    , integerD10Fail, integerMod10
+    -- * Converting between D10 and Int
+    , d10Int, intD10Maybe, intD10Either, intD10Fail, intMod10
+    -- * Converting between D10 and general numeric types
+    , d10Num, integralD10Maybe, integralD10Either
+    , integralD10Fail, integralMod10
+    ) where
 
 import D10.Safe.Type (D10 (..))
 

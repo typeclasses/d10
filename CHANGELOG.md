@@ -122,6 +122,8 @@ These new modules are:
 Other new modules:
 
   * `D10.Safe.Conversions`
+  * `D10.Safe.Quotes`
+  * `D10.Safe.Splices`
   * `D10.Safe.Type`
 
 Added *Safe Haskell* language flags (`Safe`, `Trustworthy`, `Unsafe`)

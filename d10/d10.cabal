@@ -112,6 +112,8 @@ library
       , D10.Safe
           , D10.Safe.Arithmetic
           , D10.Safe.Conversions
+          , D10.Safe.Splices
+          , D10.Safe.Quotes
           , D10.Safe.Type
       , D10.Predicate
 

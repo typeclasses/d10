@@ -12,7 +12,6 @@ import D10.Safe.Conversions (strD10ListFail)
 
 import Control.Monad ((>=>))
 import Language.Haskell.TH.Syntax (Exp (..), Pat (..), Q, dataToExpQ, dataToPatQ)
-import Prelude hiding (fail)
 
 -- | Produces an expression of type @['D10']@ that can be used
 -- in a Template Haskell splice.

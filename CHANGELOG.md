@@ -126,6 +126,9 @@ Other new modules:
   * `D10.Char.Splices`
   * `D10.Char.Type`
   * `D10.Num.Conversions`
+  * `D10.Num.Quotes`
+  * `D10.Num.Splices`
+  * `D10.Num.Type`
   * `D10.Safe.Conversions`
   * `D10.Safe.Quotes`
   * `D10.Safe.Splices`

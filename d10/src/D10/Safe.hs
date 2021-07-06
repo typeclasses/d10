@@ -58,6 +58,10 @@ import Prelude hiding (fail, (+), (-), (*))
 
 {- $modules
 
+Additional functions related to this 'D10' type may be found in:
+
+  * "D10.Safe.Arithmetic"
+
 The contents of the following modules are re-exported here:
 
   * "D10.Safe.Type"

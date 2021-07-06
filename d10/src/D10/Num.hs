@@ -85,6 +85,10 @@ import Language.Haskell.TH.Syntax (Exp (..), Pat (..), Q)
 
 {- $modules
 
+Additional functions related to this 'D10' type may be found in:
+
+  * "D10.Num.Arithmetic"
+
 The contents of the following modules are re-exported here:
 
   * "D10.Num.Conversions"

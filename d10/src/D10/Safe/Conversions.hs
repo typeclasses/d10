@@ -2,20 +2,20 @@
 
 module D10.Safe.Conversions
     (
-    -- * Converting between D10 and Char
+    -- * D10 / Char
       d10Char, charD10Maybe, charD10Either, charD10Fail
-    -- * Converting between D10 and String
+    -- * D10 / String
     , d10Str, strD10Maybe, strD10Either, strD10Fail
-    -- * Converting between [D10] and String
+    -- * [D10] / String
     , strD10ListMaybe, strD10ListEither, strD10ListFail
-    -- * Converting between D10 and Natural
+    -- * D10 / Natural
     , d10Nat, natD10Maybe, natD10Either, natD10Fail, natMod10
-    -- * Converting between D10 and Integer
+    -- * D10 / Integer
     , d10Integer, integerD10Maybe, integerD10Either
     , integerD10Fail, integerMod10
-    -- * Converting between D10 and Int
+    -- * D10 / Int
     , d10Int, intD10Maybe, intD10Either, intD10Fail, intMod10
-    -- * Converting between D10 and general numeric types
+    -- * D10 / general numeric types
     , d10Num, integralD10Maybe, integralD10Either
     , integralD10Fail, integralMod10
     ) where

@@ -5,21 +5,13 @@
 Defines a 'D10' type as
 @'D0' | 'D1' | 'D2' | 'D3' | 'D4' | 'D5' | 'D6' | 'D7' | 'D8' | 'D9'@.
 
-The following modules define @D10@ types in different ways
-but are otherwise very similar to this one:
-
-  * "D10.Char"
-  * "D10.Num"
-
-This module is called "safe" because, in contrast with the
-alternative representations of a digit defined in the other
-modules, this 'D10' type does not include any possibility
-of representing an invalid non-digit value.
-
 -}
 
 module D10.Safe
     (
+    -- * Related modules
+    -- $modules
+
     -- * Type
       D10 (..)
 
@@ -63,6 +55,28 @@ import D10.Safe.Splices
 import D10.Safe.Type
 
 import Prelude hiding (fail, (+), (-), (*))
+
+{- $modules
+
+The contents of the following modules are re-exported here:
+
+  * "D10.Safe.Type"
+  * "D10.Safe.Conversions"
+  * "D10.Safe.Quotes"
+  * "D10.Safe.Splices"
+
+The following modules define @D10@ types in different ways
+but are otherwise very similar to this one:
+
+  * "D10.Char"
+  * "D10.Num"
+
+This module is called "safe" because, in contrast with the
+alternative representations of a digit defined in the other
+modules, this 'D10' type does not include any possibility
+of representing an invalid non-digit value.
+
+-}
 
 {- $bounded
 

@@ -20,20 +20,23 @@ using Template Haskell:
   * With the @TemplateHaskell@ GHC extension enabled, you can
     splice expressions produced by 'd10Exp' and 'd10ListExp'.
 
-The following modules define @D10@ types in different ways
-but are otherwise very similar to this one:
-
-  * "D10.Char"
-  * "D10.Safe"
-
 -}
 
 module D10.Num
     (
+    -- * Related modules
+    -- $modules
+
     -- * Type
       D10
+
+    -- ** Bounded
     -- $bounded
+
+    -- ** Enum
     -- $enum
+
+    -- ** Show
     -- $show
 
     -- * Quasi-quoters
@@ -82,45 +85,60 @@ import Language.Haskell.TH.Lib    (litP, integerL)
 import Language.Haskell.TH.Quote  (QuasiQuoter (..))
 import Language.Haskell.TH.Syntax (Exp (..), Pat (..), Q)
 
----------------------------------------------------
+{- $modules
 
--- $bounded
--- ==== Bounded
---
--- >>> minBound :: D10 Integer
--- [d10|0|]
---
--- >>> maxBound :: D10 Integer
--- [d10|9|]
+The contents of the following modules are re-exported here:
 
----------------------------------------------------
+  * "D10.Num.Conversions"
 
--- $enum
--- ==== Enum
---
--- >>> [ [d10|5|] .. ]
--- [d10list|56789|]
---
--- >>> [ [d10|4|] .. [d10|7|] ]
--- [d10list|4567|]
---
--- >>> [ [d10|5|], [d10|4|] .. ]
--- [d10list|543210|]
---
--- >>> [ [d10|1|], [d10|3|] .. ]
--- [d10list|13579|]
---
--- >>> [ minBound .. maxBound ] :: [D10 Integer]
--- [d10list|0123456789|]
+The unsafe constructor for 'D10' can be found in:
 
----------------------------------------------------
+  * "D10.Num.Unsafe"
 
--- $show
--- 'show' shows base-10 digits using the quasiquoters defined
--- in this module. A single digit is displayed using 'd10'.
--- A list of digits is displayed using 'd10list'.
+The following modules define @D10@ types in different ways
+but are otherwise very similar to this one:
 
----------------------------------------------------
+  * "D10.Char"
+  * "D10.Safe"
+
+-}
+
+{- $bounded
+
+>>> minBound :: D10 Integer
+[d10|0|]
+
+>>> maxBound :: D10 Integer
+[d10|9|]
+
+-}
+
+{- $enum
+
+>>> [ [d10|5|] .. ]
+[d10list|56789|]
+
+>>> [ [d10|4|] .. [d10|7|] ]
+[d10list|4567|]
+
+>>> [ [d10|5|], [d10|4|] .. ]
+[d10list|543210|]
+
+>>> [ [d10|1|], [d10|3|] .. ]
+[d10list|13579|]
+
+>>> [ minBound .. maxBound ] :: [D10 Integer]
+[d10list|0123456789|]
+
+-}
+
+{- $show
+
+'show' shows base-10 digits using the quasiquoters defined
+in this module. A single digit is displayed using 'd10'.
+A list of digits is displayed using 'd10list'.
+
+-}
 
 -- | Produces an expression of type @'D10' a@ that can be used
 -- in a Template Haskell splice.

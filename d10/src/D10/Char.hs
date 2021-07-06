@@ -14,16 +14,13 @@ values, including:
 With the @QuasiQuotes@ GHC extension enabled, you can write
 'D10' literals using the quasi-quoters 'd10' and 'd10list'.
 
-The following modules define @D10@ types in different ways
-but are otherwise very similar to this one:
-
-  * "D10.Num"
-  * "D10.Safe"
-
 -}
 
 module D10.Char
     (
+    -- * Related modules
+    -- $modules
+
     -- * Type
       D10
 
@@ -79,6 +76,24 @@ import Prelude            hiding (fail, (+), (-), (*))
 import Language.Haskell.TH.Lib    (litP, charL)
 import Language.Haskell.TH.Quote  (QuasiQuoter (..))
 import Language.Haskell.TH.Syntax (Exp (..), Pat (..), Q)
+
+{- $modules
+
+The contents of the following modules are re-exported here:
+
+  * "D10.Char.Conversions"
+
+The unsafe constructor for 'D10' can be found in:
+
+  * "D10.Char.Unsafe"
+
+The following modules define @D10@ types in different ways
+but are otherwise very similar to this one:
+
+  * "D10.Num"
+  * "D10.Safe"
+
+-}
 
 {- $bounded
 

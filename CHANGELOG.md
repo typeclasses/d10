@@ -128,6 +128,9 @@ Other new modules:
   * `D10.Safe.Splices`
   * `D10.Safe.Type`
 
+All instances of the `Language.Haskell.TH.Syntax.Lift` class
+have been removed
+
 Added *Safe Haskell* language flags (`Safe`, `Trustworthy`, `Unsafe`)
 to indicate which modules permit constructing invalid values
 

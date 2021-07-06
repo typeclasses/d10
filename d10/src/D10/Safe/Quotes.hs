@@ -2,13 +2,10 @@
 
 module D10.Safe.Quotes (d10list) where
 
-import D10.Safe.Conversions
-import D10.Safe.Type
+import D10.Safe.Splices
 
-import Control.Monad ((>=>))
 import Control.Monad.Fail (MonadFail (fail))
 import Language.Haskell.TH.Quote (QuasiQuoter (..))
-import Language.Haskell.TH.Syntax (Q, Pat (..), lift, dataToPatQ)
 import Prelude hiding (fail, (+), (-), (*))
 
 -- | A list of base-10 digits.
@@ -52,14 +49,8 @@ import Prelude hiding (fail, (+), (-), (*))
 
 d10list :: QuasiQuoter
 d10list = QuasiQuoter
-    { quoteExp  = strD10ListFail >=> lift
-    , quotePat  = strD10ListFail >=> d10ListPat'
+    { quoteExp  = d10ListExp
+    , quotePat  = d10ListPat
     , quoteType = \_ -> fail "d10list cannot be used in a type context"
     , quoteDec  = \_ -> fail "d10list cannot be used in a declaration context"
     }
-
-d10ListPat' :: [D10] -> Q Pat
-d10ListPat' xs =
-  do
-    pats <- traverse (dataToPatQ (const Nothing)) xs
-    return (ListP pats)

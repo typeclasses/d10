@@ -6,7 +6,6 @@ import qualified D10.Predicate as Predicate
 
 import Data.Char (chr, ord)
 import Data.Monoid (Endo (..))
-import Language.Haskell.TH.Syntax (Lift)
 
 ---------------------------------------------------
 
@@ -16,7 +15,7 @@ newtype D10 =
       -- ^ The constructor's name include the word "unsafe" as a reminder
       --   that you should generally avoid using it directly, because it
       --   allows constructing invalid 'D10' values.
-    deriving (Eq, Ord, Lift)
+    deriving (Eq, Ord)
 
 ---------------------------------------------------
 

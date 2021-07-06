@@ -8,11 +8,10 @@ module D10.Safe.Splices
     , d10ListPat
     ) where
 
-import D10.Safe.Type (D10 (..))
 import D10.Safe.Conversions (strD10ListFail)
 
 import Control.Monad ((>=>))
-import Language.Haskell.TH.Syntax (Exp (..), Pat (..), Q, dataToPatQ, lift)
+import Language.Haskell.TH.Syntax (Exp (..), Pat (..), Q, dataToExpQ, dataToPatQ)
 import Prelude hiding (fail, (+), (-), (*))
 
 -- | Produces an expression of type @['D10']@ that can be used
@@ -36,12 +35,9 @@ import Prelude hiding (fail, (+), (-), (*))
 -- a quasi-quoter which does something similar.
 
 d10ListExp :: String -> Q Exp
-d10ListExp = strD10ListFail >=> lift
+d10ListExp = strD10ListFail >=> dataToExpQ (const Nothing)
 
 ---------------------------------------------------
-
-d10Pat :: D10 -> Q Pat
-d10Pat = dataToPatQ (const Nothing)
 
 -- | Produces a pattern that can be used in a splice
 -- to match a particular list of 'D10' values.
@@ -60,5 +56,5 @@ d10Pat = dataToPatQ (const Nothing)
 d10ListPat :: String -> Q Pat
 d10ListPat = strD10ListFail >=> \xs ->
   do
-    pats <- traverse d10Pat xs
+    pats <- traverse (dataToPatQ (const Nothing)) xs
     return (ListP pats)

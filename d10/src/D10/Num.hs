@@ -79,7 +79,7 @@ import Control.Monad.Fail (MonadFail (fail))
 import Prelude            hiding (fail, (+), (-), (*))
 
 -- template-haskell
-import Language.Haskell.TH.Lib    (litP, integerL)
+import Language.Haskell.TH.Lib    (appE, conE, integerL, litE, litP, varE)
 import Language.Haskell.TH.Quote  (QuasiQuoter (..))
 import Language.Haskell.TH.Syntax (Exp (..), Pat (..), Q)
 
@@ -156,7 +156,7 @@ d10Exp :: Integer -> Q Exp
 d10Exp = integerD10Fail >=> d10Exp'
 
 d10Exp' :: D10 Integer -> Q Exp
-d10Exp' (D10_Unsafe x) = [| D10_Unsafe (fromInteger x) |]
+d10Exp' (D10_Unsafe x) = conE 'D10_Unsafe `appE` (varE 'fromInteger `appE` litE (integerL x))
 
 -- | Produces an expression of type @['D10' a]@ that can be used
 -- in a Template Haskell splice.
@@ -182,7 +182,10 @@ d10ListExp :: String -> Q Exp
 d10ListExp = strD10ListFail >=> d10ListExp'
 
 d10ListExp' :: [D10 Integer] -> Q Exp
-d10ListExp' xs = [| xs |]
+d10ListExp' =
+  foldr
+    (\x e -> conE '(:) `appE` d10Exp' x `appE` e)
+    (conE '[])
 
 ---------------------------------------------------
 

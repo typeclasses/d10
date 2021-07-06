@@ -6,7 +6,7 @@ import D10.Safe.Splices
 
 import Control.Monad.Fail (MonadFail (fail))
 import Language.Haskell.TH.Quote (QuasiQuoter (..))
-import Prelude hiding (fail, (+), (-), (*))
+import Prelude hiding (fail)
 
 -- | A list of base-10 digits.
 --

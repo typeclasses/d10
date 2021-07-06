@@ -25,7 +25,7 @@ import D10.Safe.Type (D10 (..))
 -- base
 import Control.Monad.Fail (MonadFail (fail))
 import Numeric.Natural    (Natural)
-import Prelude            hiding (fail, (+), (-), (*))
+import Prelude            hiding (fail)
 
 -- | Convert a 'D10' to its underlying 'Char' representation.
 --

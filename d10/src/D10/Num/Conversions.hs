@@ -29,7 +29,7 @@ import D10.Predicate (isD10Char, isD10Int, isD10Integer, isD10Nat)
 import Control.Monad.Fail (MonadFail (fail))
 import Data.Char          (chr, ord)
 import Numeric.Natural    (Natural)
-import Prelude            hiding (fail, (+), (-), (*))
+import Prelude            hiding (fail)
 
 import qualified Prelude as P
 

@@ -1,4 +1,4 @@
-{-# language Trustworthy, TemplateHaskell #-}
+{-# language Safe #-}
 
 {- |
 
@@ -65,17 +65,9 @@ module D10.Char
     ) where
 
 import D10.Char.Conversions
-import D10.Char.Unsafe (D10(..))
-
--- base
-import Control.Monad      ((>=>))
-import Control.Monad.Fail (MonadFail (fail))
-import Prelude            hiding (fail, (+), (-), (*))
-
--- template-haskell
-import Language.Haskell.TH.Lib    (appE, charL, conE, litE, litP)
-import Language.Haskell.TH.Quote  (QuasiQuoter (..))
-import Language.Haskell.TH.Syntax (Exp (..), Pat (..), Q)
+import D10.Char.Type
+import D10.Char.Splices
+import D10.Char.Quotes
 
 {- $modules
 
@@ -86,6 +78,9 @@ Additional functions related to this 'D10' type may be found in:
 The contents of the following modules are re-exported here:
 
   * "D10.Char.Conversions"
+  * "D10.Char.Splices"
+  * "D10.Char.Quotes"
+  * "D10.Char.Type"
 
 The unsafe constructor for 'D10' can be found in:
 
@@ -135,186 +130,3 @@ in this module. A single digit is displayed using 'd10'.
 A list of digits is displayed using 'd10list'.
 
 -}
-
----------------------------------------------------
-
--- | Produces an expression of type 'D10' that can be used
--- in a Template Haskell splice.
---
--- >>> d10Nat $(d10Exp 5)
--- 5
---
--- >>> d10Nat $(d10Exp 12)
--- ...
--- ... d10 must be between 0 and 9
--- ...
---
--- You may also be interested in 'd10', a quasi-quoter which
--- does something similar.
-
-d10Exp :: Integer -> Q Exp
-d10Exp = integerD10Fail >=> d10Exp'
-
-d10Exp' :: D10 -> Q Exp
-d10Exp' (D10_Unsafe x) = conE 'D10_Unsafe `appE` litE (charL x)
-
--- | Produces an expression of type @['D10']@ that can be used
--- in a Template Haskell splice.
---
--- >>> d10Nat <$> $(d10ListExp "")
--- []
---
--- >>> d10Nat <$> $(d10ListExp "5")
--- [5]
---
--- >>> d10Nat <$> $(d10ListExp "58")
--- [5,8]
---
--- >>> d10Nat <$> $(d10ListExp "a")
--- ...
--- ... d10 must be between 0 and 9
--- ...
---
--- You may also be interested in 'd10list', a quasi-quoter which
--- does something similar.
-
-d10ListExp :: String -> Q Exp
-d10ListExp = strD10ListFail >=> d10ListExp'
-
-d10ListExp' :: [D10] -> Q Exp
-d10ListExp' =
-  foldr
-    (\x e -> conE '(:) `appE` d10Exp' x `appE` e)
-    (conE '[])
-
----------------------------------------------------
-
--- | Produces a pattern that can be used in a splice
--- to match a particular 'D10' value.
---
--- >>> :{
---       case (charD10Maybe '5') of
---         Just $(d10Pat 4) -> "A"
---         Just $(d10Pat 5) -> "B"
---         _                -> "C"
--- >>> :}
--- "B"
---
--- You may wish to use the 'd10' quasi-quoter instead.
-
-d10Pat :: Integer -> Q Pat
-d10Pat = integerD10Fail >=> d10Pat'
-
-d10Pat' :: D10 -> Q Pat
-d10Pat' (D10_Unsafe x) = [p| D10_Unsafe $(litP $ charL x) |]
-
--- | Produces a pattern that can be used in a splice
--- to match a particular list of 'D10' values.
---
--- >>> :{
---       case (strD10ListMaybe "56") of
---         Just $(d10ListPat "42") -> "A"
---         Just $(d10ListPat "56") -> "B"
---         _                       -> "C"
--- >>> :}
--- "B"
---
--- You may wish to use the 'd10list' quasi-quoter instead.
-
-d10ListPat :: String -> Q Pat
-d10ListPat = strD10ListFail >=> foldr (\x p -> [p| $(d10Pat' x) : $(p) |]) [p| [] |]
-
---------------------------------------------------
-
--- | A single base-10 digit.
---
--- This quasi-quoter, when used as an expression, produces a
--- value of type 'D10'.
---
--- >>> d10Nat [d10|5|]
--- 5
---
--- >>> d10Nat [d10|a|]
--- ...
--- ... d10 must be between 0 and 9
--- ...
---
--- >>> d10Nat [d10|58|]
--- ...
--- ... d10 must be a single character
--- ...
---
--- This quasi-quoter can also be used as a pattern.
---
--- >>> :{
---       case (charD10Maybe '5') of
---         Just [d10|4|] -> "A"
---         Just [d10|5|] -> "B"
---         _             -> "C"
--- >>> :}
--- "B"
---
--- >>> :{
---       case (charD10Maybe '5') of
---         Just [d10|x|] -> "A"
---         Just [d10|5|] -> "B"
---         _             -> "C"
--- >>> :}
--- ...
--- ... d10 must be between 0 and 9
--- ...
-
-d10 :: QuasiQuoter
-d10 = QuasiQuoter
-    { quoteExp  = strD10Fail >=> d10Exp'
-    , quotePat  = strD10Fail >=> d10Pat'
-    , quoteType = \_ -> fail "d10 cannot be used in a type context"
-    , quoteDec  = \_ -> fail "d10 cannot be used in a declaration context"
-    }
-
--- | A list of base-10 digits.
---
--- This quasi-quoter, when used as an expression, produces a
--- value of type @['D10']@.
---
--- >>> d10Nat <$> [d10list||]
--- []
---
--- >>> d10Nat <$> [d10list|5|]
--- [5]
---
--- >>> d10Nat <$> [d10list|58|]
--- [5,8]
---
--- >>> d10Nat <$> [d10list|a|]
--- ...
--- ... d10 must be between 0 and 9
--- ...
---
--- This quasi-quoter can also be used as a pattern.
---
--- >>> :{
---       case [d10list|56|] of
---         [d10list|41|] -> "A"
---         [d10list|56|] -> "B"
---         _             -> "C"
--- >>> :}
--- "B"
---
--- >>> :{
---       case [d10list|56|] of
---         [d10list|4x|] -> "A"
---         [d10list|56|] -> "B"
---         _             -> "C"
--- >>> :}
--- ...
--- ... d10 must be between 0 and 9
--- ...
-
-d10list :: QuasiQuoter
-d10list = QuasiQuoter
-    { quoteExp  = strD10ListFail >=> d10ListExp'
-    , quotePat  = d10ListPat
-    , quoteType = \_ -> fail "d10list cannot be used in a type context"
-    , quoteDec  = \_ -> fail "d10list cannot be used in a declaration context"
-    }

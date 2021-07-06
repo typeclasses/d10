@@ -106,6 +106,9 @@ library
         D10.Char
           , D10.Char.Arithmetic
           , D10.Char.Conversions
+          , D10.Char.Quotes
+          , D10.Char.Splices
+          , D10.Char.Type
           , D10.Char.Unsafe
       , D10.Num
           , D10.Num.Arithmetic
@@ -114,8 +117,8 @@ library
       , D10.Safe
           , D10.Safe.Arithmetic
           , D10.Safe.Conversions
-          , D10.Safe.Splices
           , D10.Safe.Quotes
+          , D10.Safe.Splices
           , D10.Safe.Type
       , D10.Predicate
 

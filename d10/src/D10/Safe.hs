@@ -54,8 +54,6 @@ import D10.Safe.Quotes
 import D10.Safe.Splices
 import D10.Safe.Type
 
-import Prelude hiding (fail, (+), (-), (*))
-
 {- $modules
 
 Additional functions related to this 'D10' type may be found in:

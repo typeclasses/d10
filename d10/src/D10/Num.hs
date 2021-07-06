@@ -76,7 +76,7 @@ import D10.Num.Unsafe (D10(..))
 -- base
 import Control.Monad      ((>=>))
 import Control.Monad.Fail (MonadFail (fail))
-import Prelude            hiding (fail, (+), (-), (*))
+import Prelude            hiding (fail)
 
 -- template-haskell
 import Language.Haskell.TH.Lib    (appE, conE, integerL, litE, litP, varE)

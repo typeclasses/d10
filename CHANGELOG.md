@@ -141,3 +141,7 @@ Added *Safe Haskell* language flags (`Safe`, `Trustworthy`, `Unsafe`)
 to indicate which modules permit constructing invalid values
 
 Required Cabal version required is raised from 2.2 to 3.0
+
+**v1.0.0.1**
+
+Remove `README.md` from the Cabal package

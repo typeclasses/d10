@@ -145,3 +145,7 @@ Required Cabal version required is raised from 2.2 to 3.0
 **v1.0.0.1**
 
 Remove `README.md` from the Cabal package
+
+**v1.0.0.2**
+
+Support GHC 9.2

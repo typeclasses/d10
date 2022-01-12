@@ -1,7 +1,7 @@
 cabal-version: 3.0
 
 name: d10
-version: 1.0.0.1
+version: 1.0.0.2
 category: Data
 synopsis: Digits 0-9
 
@@ -85,9 +85,11 @@ common library-dependencies
     build-depends:
         base ^>= 4.10 || ^>= 4.11 || ^>= 4.12
           || ^>= 4.13 || ^>= 4.14 || ^>= 4.15
+          || ^>= 4.16
       , template-haskell
              ^>= 2.12 || ^>= 2.13 || ^>= 2.14
           || ^>= 2.15 || ^>= 2.16 || ^>= 2.17
+          || ^>= 2.18
 
 common test
     import: language

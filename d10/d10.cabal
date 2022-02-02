@@ -96,7 +96,7 @@ common test
     import: library-dependencies
     hs-source-dirs: test
     other-modules: AssertQFails Fallible
-    build-depends: d10, hedgehog ^>= 1.0
+    build-depends: d10, hedgehog ^>= 1.0 || ^>= 1.1
     default-extensions: GeneralizedNewtypeDeriving
                         TemplateHaskell
 

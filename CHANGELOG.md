@@ -149,3 +149,8 @@ Remove `README.md` from the Cabal package
 **v1.0.0.2**
 
 Support GHC 9.2
+
+**v1.0.0.3**
+
+Remove support for GHC 8.2, 8.4, 8.6.
+Minimum required `base` version is now 4.13.

@@ -1,6 +1,0 @@
-packages: d10
-
-constraints:
-    base == 4.12.*
-  , hedgehog == 1.0.2
-  , template-haskell == 2.14.*

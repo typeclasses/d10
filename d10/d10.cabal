@@ -90,14 +90,24 @@ common library-dependencies
              ^>= 2.15 || ^>= 2.16 || ^>= 2.17
           || ^>= 2.18
 
-common test
+common test-language
     import: language
+    default-extensions:
+        GeneralizedNewtypeDeriving
+        TemplateHaskell
+
+common test-dependencies
     import: library-dependencies
+    build-depends:
+        d10
+      , hedgehog ^>= 1.0.1 || ^>= 1.1
+
+common test
+    import: test-language
+    import: test-dependencies
     hs-source-dirs: test
-    other-modules: AssertQFails Fallible
-    build-depends: d10, hedgehog ^>= 1.0.1 || ^>= 1.1
-    default-extensions: GeneralizedNewtypeDeriving
-                        TemplateHaskell
+    build-depends:
+        d10-test
 
 library
     import: language
@@ -125,6 +135,14 @@ library
           , D10.Safe.Splices
           , D10.Safe.Type
       , D10.Predicate
+
+library d10-test
+    import: test-language
+    import: test-dependencies
+    hs-source-dirs: library/d10-test
+    exposed-modules:
+        AssertQFails
+      , Fallible
 
 test-suite char
     import: test

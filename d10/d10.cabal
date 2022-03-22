@@ -66,9 +66,6 @@ license-file: license.txt
 
 build-type: Simple
 
-extra-source-files:
-    CHANGELOG.md
-
 source-repository head
     type: git
     location: https://github.com/typeclasses/d10

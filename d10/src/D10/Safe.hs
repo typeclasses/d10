@@ -82,11 +82,11 @@ of representing an invalid non-digit value.
 
 {- $bounded
 
--- >>> minBound :: D10
--- D0
---
--- >>> maxBound :: D10
--- D9
+>>> minBound :: D10
+D0
+
+>>> maxBound :: D10
+D9
 
 -}
 

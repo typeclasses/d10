@@ -1,4 +1,4 @@
-packages: ./d10
+packages: d10
 
 constraints:
     base == 4.14.*

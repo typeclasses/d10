@@ -240,6 +240,8 @@ prop_qqPat_examples = withTests 1 $ property $ do
 
 prop_arithmetic_examples :: Property
 prop_arithmetic_examples = withTests 1 $ property $ do
+    [d10|0|] + [d10|3|] === [d10|3|]
+    [d10|3|] + [d10|6|] === [d10|9|]
     [d10|2|] + [d10|3|] === [d10|5|]
     [d10|6|] + [d10|7|] === [d10|3|]
     [d10|7|] - [d10|5|] === [d10|2|]

@@ -272,6 +272,8 @@ prop_qqPat_examples = withTests 1 $ property $ do
 
 prop_arithmetic_examples :: Property
 prop_arithmetic_examples = withTests 1 $ property $ do
+    D0 + D3 === D3
+    D3 + D6 === D9
     D2 + D3 === D5
     D6 + D7 === D3
     D7 - D5 === D2

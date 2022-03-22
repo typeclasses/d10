@@ -154,3 +154,5 @@ Support GHC 9.2
 
 Remove support for GHC 8.2, 8.4, 8.6.
 Minimum required `base` version is now 4.13.
+
+Add `Hashable` instances to all `D10` types.

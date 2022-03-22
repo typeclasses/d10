@@ -77,14 +77,15 @@ common language
     default-language: Haskell2010
     ghc-options: -Wall
     default-extensions:
-        DeriveDataTypeable DeriveGeneric DeriveLift
-        DerivingStrategies InstanceSigs QuasiQuotes
-        ScopedTypeVariables TypeApplications
+        DeriveAnyClass DeriveDataTypeable DeriveGeneric
+        DeriveLift DerivingStrategies InstanceSigs
+        QuasiQuotes ScopedTypeVariables TypeApplications
 
 common library-dependencies
     build-depends:
         base ^>= 4.13 || ^>= 4.14 || ^>= 4.15
           || ^>= 4.16
+      , hashable ^>= 1.3 || ^>= 1.4
       , template-haskell
              ^>= 2.15 || ^>= 2.16 || ^>= 2.17
           || ^>= 2.18

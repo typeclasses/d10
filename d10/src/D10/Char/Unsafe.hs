@@ -5,6 +5,7 @@ module D10.Char.Unsafe (D10 (D10_Unsafe)) where
 import qualified D10.Predicate as Predicate
 
 import Data.Char (chr, ord)
+import Data.Hashable (Hashable)
 import Data.Monoid (Endo (..))
 
 ---------------------------------------------------
@@ -16,6 +17,7 @@ newtype D10 =
       --   that you should generally avoid using it directly, because it
       --   allows constructing invalid 'D10' values.
     deriving (Eq, Ord)
+    deriving newtype Hashable
 
 ---------------------------------------------------
 

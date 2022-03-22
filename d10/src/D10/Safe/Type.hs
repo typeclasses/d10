@@ -3,6 +3,7 @@
 module D10.Safe.Type (D10 (..)) where
 
 import Data.Data (Data)
+import Data.Hashable (Hashable)
 import GHC.Generics (Generic)
 
 -- | A whole number between /0/ and /9/
@@ -17,4 +18,5 @@ data D10
     | D7  -- ^ Seven
     | D8  -- ^ Eight
     | D9  -- ^ Nine
-    deriving (Bounded, Enum, Eq, Ord, Show, Data, Generic)
+    deriving stock (Bounded, Enum, Eq, Ord, Show, Data, Generic)
+    deriving anyclass Hashable

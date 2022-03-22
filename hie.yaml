@@ -1,0 +1,10 @@
+cradle:
+  cabal:
+    - path: "./d10/src"
+      component: "lib:d10"
+    - path: "./d10/test/char.hs"
+      component: "test:char"
+    - path: "./d10/test/num.hs"
+      component: "test:num"
+    - path: "./d10/test"
+      component: "test:safe"

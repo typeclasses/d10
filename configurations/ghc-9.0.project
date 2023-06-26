@@ -1,5 +1,0 @@
-packages: d10
-
-constraints:
-    base == 4.15.*
-  , template-haskell == 2.17.*
